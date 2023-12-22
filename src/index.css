@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: MaterialSymbols;
+  src: url("./assets/fonts/MaterialIconsOutlined-Regular.woff") format("woff"), url("./assets/fonts/MaterialIconsOutlined-Regular.ttf") format("truetype"), url("./assets/fonts/MaterialIconsOutlined-Regular.otf") format("opentype");;
+}
+
+* {
+  /* margin: 0;
+  padding: 0;
+  box-sizing: border-box; */
+  font-family: 'Rubik', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #121212;
+  color: white;
+  /* background-image: url("/vremBG.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; */
+}
+
+@layer utilities{
+  .btn-base {
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .w-def {
+    width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .materialIcon {
+    font-family: 'MaterialSymbols';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .scrollBar::-webkit-scrollbar {
+    width: 3px;
+    background-color: transparent;
+  }
+
+  .scrollBar::-webkit-scrollbar-thumb {
+    background-color: #ffffff50;
+  }
+
+  .fill-mode-forward {
+    animation-fill-mode: forwards;
+  }
+
+  
+  @keyframes ldio-lm0a0msd0s9-1 {
+    0% { top: 39.65px; height: 50.7px }
+    50% { top: 48.1px; height: 33.800000000000004px }
+    100% { top: 48.1px; height: 33.800000000000004px }
+  }
+  @keyframes ldio-lm0a0msd0s9-2 {
+    0% { top: 41.7625px; height: 46.475px }
+    50% { top: 48.1px; height: 33.800000000000004px }
+    100% { top: 48.1px; height: 33.800000000000004px }
+  }
+  @keyframes ldio-lm0a0msd0s9-3 {
+    0% { top: 43.875px; height: 42.25px }
+    50% { top: 48.1px; height: 33.800000000000004px }
+    100% { top: 48.1px; height: 33.800000000000004px }
+  }
+  .ldio-lm0a0msd0s9 div { position: absolute; width: 24.7px }.ldio-lm0a0msd0s9 div:nth-child(1) {
+    left: 20.150000000000002px;
+    background: #353535;
+    animation: ldio-lm0a0msd0s9-1 1.1363636363636365s cubic-bezier(0,0.5,0.5,1) infinite;
+    animation-delay: -0.2272727272727273s
+  }
+  .ldio-lm0a0msd0s9 div:nth-child(2) {
+    left: 52.65px;
+    background: #666666;
+    animation: ldio-lm0a0msd0s9-2 1.1363636363636365s cubic-bezier(0,0.5,0.5,1) infinite;
+    animation-delay: -0.11363636363636365s
+  }
+  .ldio-lm0a0msd0s9 div:nth-child(3) {
+    left: 85.15px;
+    background: #9b9b9b;
+    animation: ldio-lm0a0msd0s9-3 1.1363636363636365s cubic-bezier(0,0.5,0.5,1) infinite;
+    animation-delay: undefineds
+  }
+  
+  .loadingio-spinner-pulse-q546hrr845 {
+    width: 130px;
+    height: 130px;
+    display: inline-block;
+    overflow: hidden;
+    background: rgba(241, 242, 243, 0);
+  }
+  .ldio-lm0a0msd0s9 {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    backface-visibility: hidden;
+    transform-origin: 0 0; /* see note above */
+  }
+  .ldio-lm0a0msd0s9 div { box-sizing: content-box; }
+}
+

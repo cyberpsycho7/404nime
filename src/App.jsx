@@ -8,6 +8,7 @@ import MoreInfoPage from './Pages/MoreInfoPage'
 import WatchPage from './Pages/WatchPage'
 import TrailerContext from './Context/TrailerContext'
 import ReadPage from './Pages/ReadPage'
+import NotFoundPage from './Pages/NotFoundPage'
 
 function App() {
   const [currentWidth, setCurrentWidth] = useState(0)
@@ -40,7 +41,7 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
             <Route path='/more-info/:id' element={<MoreInfoPage currentWidth={currentWidth}/>}/>
             <Route path='/watch/:id' element={<WatchPage currentWidth={currentWidth}/>}/>
             <Route path='/read/:id' element={<ReadPage currentWidth={currentWidth}/>}/>
-          <Route path='*' element={<div className='flex flex-col gap-20 items-start'><p>not found 404</p> <Link className='underline btn-base bg-def-black-gray' to={"/"}>BACK TO MAIN</Link></div>}/>
+          <Route path='*' element={<NotFoundPage/>}/>
           </Route>
         </Routes>
       </TrailerContext.Provider>

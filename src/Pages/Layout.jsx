@@ -14,14 +14,14 @@ const Layout = () => {
 
 
   return (
-    <>
+    <div className='w-full h-full flex flex-col'>
       <TrailerWatcher/>
       <NavBar />
-      <div className="">
+      <div className="flex-1">
         <Outlet />
       </div>
       <Footer/>
-    </>
+    </div>
   );
 }
 

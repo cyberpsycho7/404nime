@@ -121,7 +121,7 @@ const MoreInfoPage = ({currentWidth}) => {
         setFetchError(false)
         axios
           .get(
-            `https://march-api1.vercel.app/meta/anilist/info/${id}?provider=gogoanime`
+            `https://march-api1.vercel.app/meta/anilist/info/${id}?provider=gogoanime`,
           )
           .then((resp) => {
             console.log(resp);

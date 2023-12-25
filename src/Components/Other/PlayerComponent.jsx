@@ -21,10 +21,10 @@ const PlayerComponent = ({title, src, poster, initTime=0, setCurrentTime, setIsP
       ref.current.currentTime = initTime
     }
   }, [initTime])
-
+  
   return (
     <MediaPlayer
-    ref={ref}
+      ref={ref}
       title={title}
       src={src}
       poster={poster}

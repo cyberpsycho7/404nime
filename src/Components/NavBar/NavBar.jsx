@@ -56,7 +56,7 @@ const NavBar = () => {
   return (
     <div
     className={`sticky top-0 left-0 w-full after:border-b-[1px] after:border-b-silver/30 flex justify-center duration-500
-    z-30 bg-gradient-to-b from-black/40 from-20% to-black/5 hover:after:!bg-def-black
+    z-30 bg-gradient-to-b from-black/40 from-20% to-black/5 hover:after:!bg-def-black flex-initial
     ${(!scrollIsZero || searchValue)
       ? "after:bg-def-black"
       : "after:bg-none"} ${(pathName === "/") ? "" : "after:!bg-def-black"}

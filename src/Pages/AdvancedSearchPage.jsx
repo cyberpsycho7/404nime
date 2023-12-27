@@ -8,9 +8,9 @@ import CatologYearSelectComponent from '../Components/AdvancedSearchPage/Catolog
 
 const AdvancedSearchPage = ({currentWidth}) => {
   const [yearOpened, setYearOpened] = useState(true)
-  const [seasonOpened, setSeasonOpened] = useState(true)
-  const [genresOpened, setGenresOpened] = useState(true)
-  const [formatsOpened, setFormatsOpened] = useState(true)
+  const [seasonOpened, setSeasonOpened] = useState(false)
+  const [genresOpened, setGenresOpened] = useState(false)
+  const [formatsOpened, setFormatsOpened] = useState(false)
   const [airingStatusOpened, setAiringStatusOpened] = useState(true)
   const [sortOpened, setSortOpened] = useState(false)
 

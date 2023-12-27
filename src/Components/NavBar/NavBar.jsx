@@ -32,7 +32,7 @@ const NavBar = () => {
   }
 
   useEffect(() => {
-    setPathName(location?.pathname)
+    setPathName(location?.pathname.split("/"))
   }, [location])
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const NavBar = () => {
     z-30 bg-gradient-to-b from-black/40 from-20% to-black/5 hover:after:!bg-def-black flex-initial
     ${(!scrollIsZero || searchValue)
       ? "after:bg-def-black"
-      : "after:bg-none"} ${(pathName === "/") ? "" : "after:!bg-def-black"}
+      : "after:bg-none"} ${(pathName[1] === "" || pathName[1] === "more-info") ? "" : "after:!bg-def-black"}
       after:absolute after:content-[""] after:top-0 after:left-0 after:w-full after:h-full after:duration-300 after:-z-10`}
       >
       {/* FIXME на мореинфо непрозрачный навбар */}
@@ -136,6 +136,7 @@ const NavBar = () => {
                   setSearchValue("Attack on titan")
                   setSearchManga(true)
                   setInputFocus(true)
+                  setTypeEnd(true)
                 }}
                 to={"/news"}
               >

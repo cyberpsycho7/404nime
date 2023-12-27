@@ -4,7 +4,7 @@ import logo from '../../assets/logoText.png'
 
 const Footer = () => {
   return (
-    <div className='h-[90px] w-full mx-auto border-t-[1px] border-t-silver/30 mt-6' >
+    <div className='h-[90px] w-full mx-auto border-t-[1px] border-t-silver/30 mt-6 shrink-0' >
         <div className='h-full w-[1140px] px-5 mx-auto 1480res:w-full 1480res:px-5 flex justify-between items-center'>
             <div>
                 <Link to={"/"}>

@@ -10,17 +10,22 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import 'swiper/css/effect-fade';
+import ErrorPage from './ErrorPage'
 
 
 const MainPage = ({currentWidth}) => {
   // const [bestScorePage, setBestScorePage] = useState(1)
   // const [bestScore, setBestScore] = useState([])
-  const [popularHasNextPage, setPopularHasNextPage] = useState([])
-  const [trendingNowPage, setTrendingNowPage] = useState(1)
-  const [trendingNowHasNextPage, setTrendingNowHasNextPage] = useState([])
-  const [popularPage, setPopularPage] = useState(1)
+  // const [popularHasNextPage, setPopularHasNextPage] = useState([])
+  // const [trendingNowPage, setTrendingNowPage] = useState(1)
+  // const [trendingNowHasNextPage, setTrendingNowHasNextPage] = useState([])
+  // const [popularPage, setPopularPage] = useState(1)
+  const [errorObj, setErrorObj] = useState(null)
+  const [fetchError, setFetchError] = useState(false)
+  const [finishedRequestCount, setFinishedRequestCount] = useState(0)
+  const [isLoaded, setIsloaded] = useState(true)
   const [clearConfirm, setClearConfirm] = useState(false)
-  const [preloader, setPreloader] = useState(0)
+  const [preloader, setPreloader] = useState(true)
   const [popular, setPopular] = useState(null)
   const [bestScore, setBestScore] = useState(null)
   const [upcoming, setUpcoming] = useState(null)
@@ -67,52 +72,56 @@ const MainPage = ({currentWidth}) => {
       trailerSrc: "https://www.youtube.com/embed/dURh9kVzcw8?enablejsapi=1&wmode=opaque&autoplay=1"
     },
   ])
+
+  const setItems = (set, resp) => {
+    set(resp.data.results)
+    console.log(resp);
+    setFinishedRequestCount(prev => prev+1)
+  }
+
+  const setError = (e) => {
+    setFetchError(true)
+    setErrorObj(e)
+    setPreloader(false)
+    console.log(e);
+  }
   
   // useEffect(() => {
   // }, [])
   
-  // useEffect(() => {
-    // }, [])
+  useEffect(() => {
+    if(finishedRequestCount >= 4) {
+      setIsloaded(false)
+      setTimeout(() => {
+        setPreloader(false)
+      }, 300)
+    }
+  }, [finishedRequestCount])
     
   useEffect(() => {
     document.title = "404NIME - Anime Online"
+    setFetchError(false)
+    setIsloaded(true)
+    setPreloader(true)
+
     axios.get(`https://march-api1.vercel.app/meta/anilist/trending?perPage=20`)
-    .then(resp => {
-      setTrendingNow(resp.data.results)
-      console.log(resp.data);
-      setPreloader(prev => prev+1)
-    })
+    .then(resp => setItems(setTrendingNow, resp))
+    .catch(e => setError(e))
 
     // axios.get(`https://api.consumet.org/meta/anilist/advanced-search?sort=["POPULARITY_DESC"]&perPage=20`)
     axios.get(`https://march-api1.vercel.app/meta/anilist/popular?perPage=20`)
-    .then(resp => {
-      setPopular(resp.data.results)
-      console.log(resp.data);
-      setPreloader(prev => prev+1)
-    })
+    .then(resp => setItems(setPopular, resp))
+    .catch(e => setError(e))
 
     axios.get(`https://march-api1.vercel.app/meta/anilist/advanced-search?sort=["POPULARITY_DESC"]&status=NOT_YET_RELEASED&perPage=20`)
-    .then(resp => {
-      setUpcoming(resp.data.results)
-      console.log(resp.data);
-      setPreloader(prev => prev+1)
-    })
+    .then(resp => setItems(setUpcoming, resp))
+    .catch(e => setError(e))
 
     axios.get(`https://march-api1.vercel.app/meta/anilist/advanced-search?sort=["SCORE_DESC"]&perPage=20`)
-    .then(resp => {
-      setBestScore(resp.data.results)
-      console.log(resp.data);
-      setPreloader(prev => prev+1)
-    })
-    // .finally(() => {
-    //   setPreloader(false)
-    // })
+    .then(resp => setItems(setBestScore, resp))
+    .catch(e => setError(e))
 
   }, [])
-
-  useEffect(() => {
-    console.log(preloader);
-  }, [preloader])
 
   // useEffect(() => {
   //   axios.get(`https://api.consumet.org/meta/anilist/recent-episodes`)
@@ -121,7 +130,8 @@ const MainPage = ({currentWidth}) => {
   //   })
   // }, [])
 
-  if(preloader < 4) return <PreloaderComponent isLoaded={true}/>
+  if(preloader) return <PreloaderComponent isLoaded={isLoaded}/>
+  if(fetchError) return <ErrorPage errorObj={errorObj}/>
   return (
     <div className="animate-fadeInAnimate fill-mode-forward opacity-0 flex flex-col items-center">
       {/* <Test /> */}

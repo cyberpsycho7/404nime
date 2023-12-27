@@ -8,7 +8,6 @@ const ReadPage = ({currentWidth}) => {
     const {id} = useParams()
     const search = useLocation().search
     const initChapter = Number(new URLSearchParams(search).get("chapter"))
-    console.log(initChapter);
 
     const [pageLoading, setPageLoading] = useState(true)
     const [mangaInfo, setMangaInfo] = useState(null)

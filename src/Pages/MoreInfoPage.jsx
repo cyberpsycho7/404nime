@@ -8,6 +8,8 @@ import AnimeInfoRelations from '../Components/MoreInfoPage/AnimeInfoRelations'
 import AnimeInfoEpisodes from '../Components/MoreInfoPage/AnimeInfoEpisodes'
 import AnimeInfoNavTab from '../Components/MoreInfoPage/AnimeInfoNavTab'
 import AnimeInfoCharacters from '../Components/MoreInfoPage/AnimeInfoCharacters'
+import ErrorPage from './ErrorPage'
+import SwiperComponent from '../Components/Other/SwiperComponent'
 
 const MoreInfoPage = ({currentWidth}) => {
   const {id} = useParams()
@@ -25,7 +27,7 @@ const MoreInfoPage = ({currentWidth}) => {
     const [moreText, setMoreText] = useState(false)
     const [fetchError, setFetchError] = useState(0)
     const [isLoaded, setIsLoaded] = useState(true)
-    
+    const [errorObj, setErrorObj] = useState(null)
     
 
 
@@ -39,6 +41,7 @@ const MoreInfoPage = ({currentWidth}) => {
     // const horizThumb = useRef()
     // const horizThumb2 = useRef()
     // const openedBlock = useRef()
+
 
   const changeOpenedBlock = (num) => {
     // console.log(num);
@@ -97,7 +100,7 @@ const MoreInfoPage = ({currentWidth}) => {
         console.log(resp.data, "MANHAAAAAAAAAA");
         completeLoading(false)
       })
-      .catch(() => completeLoading(true))
+      .catch((e) => {completeLoading(true); setErrorObj(e)})
     }
 
     const fetchEpisodesFromZoro = () => {
@@ -108,7 +111,7 @@ const MoreInfoPage = ({currentWidth}) => {
         console.log(resp.data.episodes);
         completeLoading(false)
       })
-      .catch(() => {completeLoading(true); setEpisodeInfo(null)})
+      .catch((e) => {completeLoading(true); setEpisodeInfo(null); setErrorObj(e)} )
     }
 
 
@@ -148,14 +151,14 @@ const MoreInfoPage = ({currentWidth}) => {
               if(isMangaLocal) fetchMangaInfo()
               else fetchEpisodesFromZoro()
             })
-            .catch((e) => {completeLoading(true); console.log(e);})         
+            .catch((e) => {completeLoading(true); console.log(e); setErrorObj(e)})         
           })
-          .catch((e) => {completeLoading(true); console.log(e);})
+          .catch((e) => {completeLoading(true); console.log(e); setErrorObj(e)})
     }, [id])
 
 
   if(preloader) return <PreloaderComponent isLoaded={isLoaded}/>
-  else if(fetchError) return <div className='text-4xl text-white'>ERROR WHILE FETCHING TRY AGAIN LATER <button onClick={() => history.back()} className='btn-base'>BACK</button></div>
+  else if(fetchError) return <ErrorPage errorObj={errorObj}/>
   else return (
     <div className={` opacity-0 animate-fadeInAnimate fill-mode-forward min-h-[200vh]`}>
       <MoreInfoBanner cover={animeInfo?.cover} image={animeInfo?.image} trailer={MALInfo?.trailer?.embed_url} isMusic={animeInfo?.type.toLowerCase() === "music" ? true : false}/>
@@ -210,7 +213,7 @@ const MoreInfoPage = ({currentWidth}) => {
                     </span>
                     <p>{isManga ? "Chapters" : "Episodes"}</p>
                   </a>
-                  <button className="btn-base bg-def-gray text-white flex gap-2 items-center justify-center 700res:w-full">
+                  <a href='#similar' className="btn-base bg-def-gray text-white flex gap-2 items-center justify-center 700res:w-full">
                     <span>
                       <svg className='w-5 h-5' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M16.4481 1.50023C14.844 1.4862 13.3007 2.10727 12.15 3.22645L12.1351 3.24107L11.6464 3.7298C11.2559 4.12032 11.2559 4.75349 11.6464 5.14401L12.3535 5.85112C12.7441 6.24164 13.3772 6.24164 13.7677 5.85112L14.2484 5.37048C14.834 4.80437 15.6142 4.49305 16.4218 4.50012C17.2326 4.50721 18.0103 4.83463 18.5868 5.41517C19.1637 5.99606 19.4927 6.78402 19.4998 7.60991C19.5069 8.43176 19.1946 9.22174 18.633 9.81182L15.5209 12.9432C15.2056 13.2609 14.8269 13.5058 14.4107 13.6622C13.9945 13.8185 13.5501 13.8828 13.1076 13.8509C12.6651 13.8189 12.2341 13.6915 11.8438 13.4768C11.7456 13.4228 11.6504 13.3635 11.5588 13.2993C11.1066 12.9823 10.4859 12.8717 10.0425 13.201L9.23978 13.7973C8.79642 14.1266 8.69902 14.7603 9.09601 15.1443C9.48444 15.52 9.9219 15.8435 10.3977 16.1053C11.1664 16.5282 12.0171 16.78 12.8918 16.8431C13.7666 16.9062 14.6444 16.779 15.4656 16.4706C16.2868 16.1621 17.0317 15.6797 17.65 15.0568L20.7712 11.9162L20.7898 11.8971C21.9007 10.7389 22.5136 9.18987 22.4997 7.58402C22.4859 5.97817 21.8463 4.43996 20.7155 3.30127C19.5844 2.16225 18.0521 1.51427 16.4481 1.50023Z" fill="white"/>
@@ -218,10 +221,10 @@ const MoreInfoPage = ({currentWidth}) => {
                       </svg>
                     </span>
                     <p>Similar</p>
-                  </button>
+                  </a>
                 </div>
                   {(isManga ? episodeInfo.length > 0 : animeInfo?.episodes.length > 0) ? <Link
-                    to={isManga ? `/read/${animeInfo?.id}?chapter=1` : `/watch/${animeInfo?.id}?ep=1`}
+                    to={isManga ? `/read/${animeInfo?.id}?chapter=0` : `/watch/${animeInfo?.id}?ep=1`}
                     className="400res:w-full 400res:self-stretch"
                   >
                     <button className="btn-base bg-def-gray text-white w-full flex gap-2 justify-center items-center">
@@ -266,6 +269,9 @@ const MoreInfoPage = ({currentWidth}) => {
             {/* {openedBlock === 2 || (secondOpenedBlock === 0 && currentWidth <= 400) ? null : null} */}
             <AnimeInfoCharacters show={((openedBlock === 2 || (secondOpenedBlock === 0 && currentWidth <= 400)) ? true : false)} currentWidth={currentWidth} title={(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)} characters={animeInfo?.characters}/>
             <AnimeInfoRelations show={((openedBlock === 3 || (secondOpenedBlock === 1 && currentWidth <= 400)) ? true : false)} currentWidth={currentWidth} title={(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)} relations={animeInfo?.relations}/>
+            
+            <h3 id='similar' className='text-2xl font-medium mt-20 mb-10 mx-auto w-max'>{isManga ? "Similar Manga" : "Similar Anime"}</h3>
+            <SwiperComponent currentWidth={currentWidth} items={animeInfo?.recommendations} type={"recomm"}/>
             {/* <div className='flex-col 400res:w-full mt-10 hidden'>
               <div className='flex w-min 540res:text-sm 400res:w-full'>
                 <button

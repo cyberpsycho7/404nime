@@ -8,23 +8,22 @@ import MoreInfoPage from './Pages/MoreInfoPage'
 import WatchPage from './Pages/WatchPage'
 import TrailerContext from './Context/TrailerContext'
 import ReadPage from './Pages/ReadPage'
-import NotFoundPage from './Pages/NotFoundPage'
+import ErrorPage from './Pages/ErrorPage'
 
 function App() {
   const [currentWidth, setCurrentWidth] = useState(0)
   useEffect(() => {
-    const resized = () => {
-        setCurrentWidth(window.innerWidth)
-        // console.log("resie");
-        console.log(window.innerWidth);
+    const resized = (e) => {
+      setCurrentWidth(window.innerWidth)
+      // console.log("resie");
+      console.log(window.innerWidth);
     }
-    window.onresize = () => {
-        resized()
-    }
+    window.addEventListener("resize", resized)
 
     setTimeout(() => {
       resized()
     }, 400)
+
 }, [])
 
 const [trailerSrc, setTrailerSrc] = useState("https://www.youtube.com/embed/MRvKQYxvgC4?enablejsapi=1&wmode=opaque&autoplay=1")
@@ -41,7 +40,7 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
             <Route path='/more-info/:id' element={<MoreInfoPage currentWidth={currentWidth}/>}/>
             <Route path='/watch/:id' element={<WatchPage currentWidth={currentWidth}/>}/>
             <Route path='/read/:id' element={<ReadPage currentWidth={currentWidth}/>}/>
-          <Route path='*' element={<NotFoundPage/>}/>
+          <Route path='*' element={<ErrorPage />}/>
           </Route>
         </Routes>
       </TrailerContext.Provider>

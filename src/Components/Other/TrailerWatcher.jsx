@@ -3,7 +3,6 @@ import TrailerContext from '../../Context/TrailerContext'
 
 const TrailerWatcher = () => {
     const {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow} = useContext(TrailerContext)
-    console.log(trailerSrc);
 
     const changeTrailer = () => {
         setTrailerSrc('')

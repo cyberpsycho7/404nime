@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import img from "../../assets/denjiBG.jpg"
 import { Link } from 'react-router-dom'
 import TrailerContext from '../../Context/TrailerContext'
 

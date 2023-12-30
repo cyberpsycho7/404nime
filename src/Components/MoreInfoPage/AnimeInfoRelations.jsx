@@ -11,7 +11,7 @@ const AnimeInfoRelations = ({relations, title, show, currentWidth}) => {
       {relations.length !== 0 ? 
         <SwiperComponent currentWidth={currentWidth} items={relations} type={"relation"}/>
       : 
-        <div className='text-2xl font-medium mb-6 1480res:px-5'>Empty relations</div>}
+        null}
     </div>
   );
 }

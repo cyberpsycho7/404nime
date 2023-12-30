@@ -4,6 +4,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import PreloaderComponent from '../Components/Other/PreloaderComponent';
 import PlayerComponent from '../Components/Other/PlayerComponent';
 import AnimeCard from '../Components/Other/AnimeCard';
+import ErrorPage from './ErrorPage';
 
 
 const WatchPage = ({currentWidth}) => {
@@ -18,6 +19,15 @@ const WatchPage = ({currentWidth}) => {
 
     const [animeInfo, setAnimeInfo] = useState(null)
     const [preloader, setPreloader] = useState(true)
+    const [fetchError, setFetchError] = useState(false)
+    const [errorObj, setErrorObj] = useState({
+      message: "Unexpected Error",
+      response: {
+        data: {
+          message: "Refresh page or try again later."
+        }
+      }
+    })
     const [videoPreloader, setVideoPreloader] = useState(true)
     const [isLoaded, setIsLoaded] = useState(false)
     const [currentEpNum, setCurrentEpNum] = useState(initEp === 0 ? 1 : initEp)
@@ -71,6 +81,15 @@ const WatchPage = ({currentWidth}) => {
       }
     }
 
+    const completeLoading = (state) => {
+      setFetchError(state)
+      setIsLoaded(false)
+      setVideoPreloader(false)
+      setTimeout(() => {
+        setPreloader(false)
+      }, 300)
+    }
+
     const setEpisodeFromHistory = () => {
       if(!watchBefore) return
       console.log(historyTime);
@@ -100,6 +119,10 @@ const WatchPage = ({currentWidth}) => {
       animeHistoryRef.current = animeHistory
       episodeRef.current = currentEpNum
     }, [currentTime, animeInfo, animeHistory, currentEpNum])
+
+    useEffect(() => {
+      console.log(episodeInfo);
+    }, [episodeInfo])
     
     
     useEffect(() => {
@@ -116,7 +139,12 @@ const WatchPage = ({currentWidth}) => {
           else setEpisodeInfo(zoroResp.data.episodes)
           console.log(zoroResp.data.episodes);
         })
-        .catch(() => setEpisodeInfo(null))
+        .catch((e) => {
+          setEpisodeInfo(resp.data.episodes)
+        })
+      }).catch((e) => {
+        completeLoading(true)
+        setErrorObj(e)
       })
     }, [id])
     
@@ -126,24 +154,23 @@ const WatchPage = ({currentWidth}) => {
         setVideoPreloader(true)
         document.title = (animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji) + " - Episode " + currentEpNum + " - Watch online on 404NIME"
         // setPreloader(true)
-        try {
           axios.get(`https://march-api1.vercel.app/meta/anilist/watch/${animeInfo?.episodes[currentEpNum-1].id}`)
           .then(resp => {
             let sources = resp.data.sources
             let defaultSource = sources.filter(item => item?.quality === "default")[0].url
             console.log(defaultSource);
             setCurrentActiveUrl(defaultSource)
-
           }).finally(() => {
-            setIsLoaded(false)
-            setVideoPreloader(false)
-            setTimeout(() => {
-              setPreloader(false)
-            }, 300)
-          });
-        } catch (err) {
-          setPreloader(true)
-        }
+            // setIsLoaded(false)
+            // setVideoPreloader(false)
+            // setTimeout(() => {
+            //   setPreloader(false)
+            // }, 300)
+            completeLoading(false)
+          }).catch((e) => {
+            completeLoading(true)
+            setErrorObj(e)
+          })
         
       }, [currentEpNum, animeInfo, id])
       
@@ -162,7 +189,8 @@ const WatchPage = ({currentWidth}) => {
         }
       }, [])
 
-    if (preloader) return <PreloaderComponent isLoaded={isLoaded} />;
+  if(preloader) return <PreloaderComponent isLoaded={isLoaded} />;
+  if(fetchError) return <ErrorPage errorObj={errorObj}/>
   return (
     <div className="w-full h-[200vh] flex justify-center animate-fadeInAnimate opacity-0 fill-mode-forward relative">
       <div className="w-[1440px] flex gap-[20px] mx-5 mt-5">
@@ -258,23 +286,25 @@ const WatchPage = ({currentWidth}) => {
             <div className="hidden 1000res:flex h-14  mt-3 rounded-md  items-center justify-start w-full bg-def-gray px-3">
               <div className="flex items-center h-full">
                 <p>Ep. № </p>
-                <input
-                  placeholder={`1 - ${animeInfo?.totalEpisodes}`}
-                  maxLength={4}
-                  type="text"
-                  className=" w-[3.7rem] bg-white outline-none text-text-gray rounded-sm ml-2 p-1 flex-shrink-0"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      try {
-                        if (
-                          e.target.value > 0 &&
-                          e.target.value <= animeInfo?.episodes.length
-                        )
-                          setCurrentEpNum(e.target.value);
-                      } catch {}
-                    }
-                  }}
-                />
+                <form onSubmit={(e) => {
+                  e.preventDefault()
+                  console.log(e.target[0].value);
+                  try {
+                    if (
+                      Number(e.target[0].value) > 0 &&
+                      Number(e.target[0].value) <= animeInfo?.episodes.length
+                    )
+                      setCurrentEpNum(Number(e.target[0].value));
+                  } catch {}
+
+                }}>
+                  <input
+                    placeholder={`1 - ${animeInfo?.totalEpisodes}`}
+                    maxLength={4}
+                    type="text"
+                    className=" w-[3.7rem] bg-white outline-none text-text-gray rounded-sm ml-2 p-1 flex-shrink-0"
+                  />
+                </form>
                 <div className="ml-3 pl-3 border-l-[2px] border-l-white/30 h-full flex items-center">
                   <select
                     name="episode"
@@ -337,38 +367,36 @@ const WatchPage = ({currentWidth}) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2 w-[45%] 1000res:hidden">
+        <div className="flex flex-col gap-2 w-[45%] 1200res:w-[55%] 1000res:hidden">
           <div className="flex gap-1 items-center">
             <p>Episode number:</p>
-            <input
-              placeholder={`1 - ${animeInfo?.totalEpisodes}`}
-              maxLength={4}
-              type="text"
-              className=" w-[3.7rem] bg-white/30 outline-none rounded-sm p-1"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  try {
-                    console.dir(
-                      epListRef.current.childNodes[e.target.value - 1]
-                    );
-                    epListRef.current.childNodes[
-                      e.target.value - 1
-                    ].scrollIntoView({ block: "center", behavior: "smooth" });
-                  } catch {}
-                }
-              }}
-            />
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              console.log(e.target[0].value);
+              try {
+                epListRef.current.childNodes[
+                  Number(e.target[0].value) - 1
+                ].scrollIntoView({ block: "center", behavior: "smooth" });
+              } catch {}
+            }}>
+              
+              <input
+                placeholder={`1 - ${animeInfo?.totalEpisodes}`}
+                maxLength={4}
+                type="text"
+                className=" w-[3.7rem] bg-white/30 outline-none rounded-sm p-1"
+              />
+            </form>
           </div>
           <div
             ref={epListRef}
-            className="w-full flex flex-col gap-5 max-h-[calc(100vh-165px)] overflow-scroll scrollbar-none"
+            className="[&::-webkit-scrollbar]:w-[1px] w-full flex flex-col gap-5 max-h-[calc(100vh-165px)] overflow-y-scroll scrollbar-thin scrollbar-track-white/10 scrollbar-track-rounded-full"
           >
             {episodeInfo?.map((item) => (
               <div
                 id={`${item.number}`}
                 key={item.id}
-                className="flex gap-2 h-[90px] flex-shrink-0 cursor-pointer
-            "
+                className="flex gap-2 h-[90px] flex-shrink-0 cursor-pointer [&_div:first-child]:hover:opacity-100"
                 onClick={() => setCurrentEpNum(item?.number)}
               >
                 <div
@@ -379,7 +407,7 @@ const WatchPage = ({currentWidth}) => {
                   <div
                     className={`${
                       item.number === currentEpNum ? "opacity-100" : "opacity-0"
-                    } bg-black/40 rounded-md w-full h-full flex justify-center items-center duration-200 hover:opacity-100`}
+                    } bg-black/40 rounded-md w-full h-full flex justify-center items-center duration-200`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

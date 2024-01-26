@@ -15,6 +15,8 @@
     "@vime/core": "^5.4.1",
     "@vime/react": "^5.4.1",
     "axios": "^1.5.0",
+    "bcryptjs": "^2.4.3",
+    "image-to-base64": "^2.2.0",
     "react": "^18.2.0",
     "react-animated-cursor": "^2.11.2",
     "react-dom": "^18.2.0",

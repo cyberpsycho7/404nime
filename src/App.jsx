@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import './App.css'
 import { Link, Route, Routes } from 'react-router-dom'
 import Layout from './Pages/Layout'
@@ -7,12 +7,16 @@ import AdvancedSearchPage from './Pages/AdvancedSearchPage'
 import MoreInfoPage from './Pages/MoreInfoPage'
 import WatchPage from './Pages/WatchPage'
 import TrailerContext from './Context/TrailerContext'
+import UserContext from './Context/UserContext'
 import ReadPage from './Pages/ReadPage'
 import ErrorPage from './Pages/ErrorPage'
 import LoginPage from './Pages/LoginPage'
+import axios from 'axios'
+import ProfilePage from './Pages/ProfilePage'
 
 function App() {
   const [currentWidth, setCurrentWidth] = useState(0)
+  const [user, setUser] = useState(null)
   useEffect(() => {
     const resized = (e) => {
       setCurrentWidth(window.innerWidth)
@@ -25,6 +29,19 @@ function App() {
       resized()
     }, 400)
 
+    if(localStorage.getItem("JWT")) {
+      axios.get("https://four04nime.onrender.com/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
+      .then(res => {
+        // localStorage.setItem("user", JSON.stringify(res.data))
+        setUser(res.data)
+      })
+      .catch(() => {
+        // localStorage.removeItem("user")
+        // localStorage.removeItem("JWT")
+        setUser(null)
+      })
+    }
+
 }, [])
 
 const [trailerSrc, setTrailerSrc] = useState("https://www.youtube.com/embed/MRvKQYxvgC4?enablejsapi=1&wmode=opaque&autoplay=1")
@@ -33,6 +50,7 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
 
 
   return (
+    <UserContext.Provider value={user}>
       <TrailerContext.Provider value={value}>
         <Routes>
           <Route path='/' element={<Layout />}>
@@ -41,11 +59,12 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
             <Route path='/more-info/:id' element={<MoreInfoPage currentWidth={currentWidth}/>}/>
             <Route path='/watch/:id' element={<WatchPage currentWidth={currentWidth}/>}/>
             <Route path='/read/:id' element={<ReadPage currentWidth={currentWidth}/>}/>
-            <Route path='/login' element={<LoginPage currentWidth={currentWidth}/>}/>
+            <Route path='/profile/:login' element={<ProfilePage/>}/>
           <Route path='*' element={<ErrorPage />}/>
           </Route>
         </Routes>
       </TrailerContext.Provider>
+    </UserContext.Provider>
   )
 }
 

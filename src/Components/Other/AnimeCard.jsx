@@ -61,6 +61,13 @@ const AnimeCard = ({info, type}) => {
             ) : (
               ""
             )}
+            {type === "manga" ? (
+              <p>
+                {info?.type} {info?.chapters ? `, ${info?.chapters} chapters` : ""} 
+              </p>
+            ) : (
+              ""
+            )}
             {type === "anime" ? (
               <p>
                 {info?.releaseDate ? info?.releaseDate+", " : ""} {info?.genres[0]}

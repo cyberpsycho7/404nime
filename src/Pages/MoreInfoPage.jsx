@@ -103,11 +103,11 @@ const MoreInfoPage = ({currentWidth}) => {
       .catch((e) => {completeLoading(true); setErrorObj(e)})
     }
 
-    const fetchEpisodesFromZoro = () => {
+    const fetchEpisodesFromZoro = (episodes) => {
       axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=zoro`)
       .then(resp => {
-        if(resp.data.episodes.length < 1) setEpisodeInfo(animeInfo?.episodes)
-        else setEpisodeInfo(resp.data.episodes)
+        if(episodes.length === resp.data.episodes.length) setEpisodeInfo(resp.data.episodes)
+        else setEpisodeInfo([])
         console.log(resp.data.episodes);
         completeLoading(false)
       })
@@ -144,12 +144,12 @@ const MoreInfoPage = ({currentWidth}) => {
             // console.log(animeTypes);
             // console.log(animeTypes.includes(resp.data.type));
             axios.get(`https://api.jikan.moe/v4/${animeTypes.includes(resp.data.type) ? "anime" : "manga"}/${resp.data.malId}/full`)
-            .then(resp => {
-              console.log(resp.data.data)
-              setMALInfo(resp.data.data)
+            .then(MALResp => {
+              console.log(MALResp.data.data)
+              setMALInfo(MALResp.data.data)
 
               if(isMangaLocal) fetchMangaInfo()
-              else fetchEpisodesFromZoro()
+              else fetchEpisodesFromZoro(resp.data.episodes)
             })
             .catch((e) => {completeLoading(true); console.log(e); setErrorObj(e)})         
           })
@@ -160,7 +160,7 @@ const MoreInfoPage = ({currentWidth}) => {
   if(preloader) return <PreloaderComponent isLoaded={isLoaded}/>
   else if(fetchError) return <ErrorPage errorObj={errorObj}/>
   else return (
-    <div className={` opacity-0 animate-fadeInAnimate fill-mode-forward min-h-[200vh]`}>
+    <div className={` opacity-0 animate-fadeInAnimate fill-mode-forward min-h-full`}>
       <MoreInfoBanner cover={animeInfo?.cover} image={animeInfo?.image} trailer={MALInfo?.trailer?.embed_url} isMusic={animeInfo?.type.toLowerCase() === "music" ? true : false}/>
       <div className='w-full flex justify-center flex-col items-center'>
           <div className="w-[1440px] 700res:block flex gap-24 900res:gap-12 1480res:px-5 1480res:w-full z-10">
@@ -270,8 +270,8 @@ const MoreInfoPage = ({currentWidth}) => {
             <AnimeInfoCharacters show={((openedBlock === 2 || (secondOpenedBlock === 0 && currentWidth <= 400)) ? true : false)} currentWidth={currentWidth} title={(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)} characters={animeInfo?.characters}/>
             <AnimeInfoRelations show={((openedBlock === 3 || (secondOpenedBlock === 1 && currentWidth <= 400)) ? true : false)} currentWidth={currentWidth} title={(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)} relations={animeInfo?.relations}/>
             
-            <h3 id='similar' className='text-2xl font-medium mt-20 mb-10 mx-auto w-max'>{isManga ? "Similar Manga" : "Similar Anime"}</h3>
-            <SwiperComponent currentWidth={currentWidth} items={animeInfo?.recommendations} type={"recomm"}/>
+            <h3 id='similar' className={`${animeInfo?.recommendations.length < 1 ? "hidden" : ""} text-2xl font-medium mt-20 mb-10 mx-auto w-max`}>{isManga ? "Similar Manga" : "Similar Anime"}</h3>
+            <SwiperComponent currentWidth={currentWidth} items={animeInfo?.recommendations} type={isManga ? "manga" : "recomm"}/>
             {/* <div className='flex-col 400res:w-full mt-10 hidden'>
               <div className='flex w-min 540res:text-sm 400res:w-full'>
                 <button

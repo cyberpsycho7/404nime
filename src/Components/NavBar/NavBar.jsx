@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import MiniSearchParent from '../Search/MiniSearchParent';
 import logoText from "../../assets/logoText.png"
+import Registration from '../Authorization/Registration';
 
 const NavBar = () => {
 
@@ -16,6 +17,7 @@ const NavBar = () => {
     const [preloader, setPreloader] = useState(true)
     const [searchManga, setSearchManga] = useState(false)
     const [pathName , setPathName] = useState("/")
+    const [isShowRegistration , setIsShowRegistration] = useState(false)
     const location = useLocation()
 
   const timeoutRef = useRef()
@@ -62,7 +64,7 @@ const NavBar = () => {
       : "after:bg-none"} ${(pathName[1] === "" || pathName[1] === "more-info") ? "" : "after:!bg-def-black"}
       after:absolute after:content-[""] after:top-0 after:left-0 after:w-full after:h-full after:duration-300 after:-z-10`}
       >
-      {/* FIXME на мореинфо непрозрачный навбар */}
+        <Registration show={isShowRegistration} setIsShowRegistration={setIsShowRegistration}/>
       <div
         className={`fixed bottom-28 right-12 h-14 w-14 bg-def-gray text-text-gray hover:text-white hover:border-white
       cursor-pointer border-text-gray border-[2px] rounded-full z-30 flex justify-center items-center materialIcon
@@ -158,10 +160,12 @@ const NavBar = () => {
             </li> */}
           </ul>
           <div className='flex gap-5'>
-            <button className="650res:block hidden text-sm py-[10px] px-3 bg-def-black-gray rounded-lg font-medium text-white cursor-not-allowed">
+            <button
+            className="650res:block hidden text-sm py-[10px] px-3 bg-def-black-gray rounded-lg font-medium text-white cursor-not-allowed">
               Log in
             </button>
-            <button className="650res:block hidden text-sm py-[10px] px-3 bg-white rounded-lg font-medium text-def-black cursor-not-allowed">
+            <button onClick={() => {setIsShowRegistration(true)}}
+            className="650res:block hidden text-sm py-[10px] px-3 bg-white rounded-lg font-medium text-def-black cursor-not-allowed">
               Get started
             </button>
   
@@ -247,7 +251,8 @@ const NavBar = () => {
           <button className="btn-base bg-def-black-gray text-white cursor-not-allowed">
             Log in
           </button>
-          <button className="btn-base bg-white text-def-black cursor-not-allowed">
+          <button onClick={() => {setIsShowRegistration(true)}}
+          className="btn-base bg-white text-def-black cursor-not-allowed">
             Get started
           </button>
         </div>

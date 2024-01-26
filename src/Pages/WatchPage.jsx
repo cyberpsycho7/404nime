@@ -135,8 +135,8 @@ const WatchPage = ({currentWidth}) => {
         axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=zoro`)
         .then(zoroResp => {
           // setEpisodeInfo(resp.data.episodes)
-          if(zoroResp.data.episodes.length < 1) setEpisodeInfo(resp.data.episodes)
-          else setEpisodeInfo(zoroResp.data.episodes)
+          if(zoroResp.data.episodes.length === resp.data.episodes.length) setEpisodeInfo(zoroResp.data.episodes)
+          else setEpisodeInfo(resp.data.episodes)
           console.log(zoroResp.data.episodes);
         })
         .catch((e) => {
@@ -326,11 +326,15 @@ const WatchPage = ({currentWidth}) => {
             </div>
           </div>
           <div className="mt-5 flex flex-col">
-            <Link to={`/more-info/${animeInfo?.id}`} className='max-w-max'>
-              <h4 className="text-text-gray mb-4 text-xl 500res:text-base 500res:mb-2 400res:text-sm ">
-                {(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)}
-              </h4>
-            </Link>
+            <div className='text-text-gray mb-4 text-lg 500res:text-base 500res:mb-2 400res:text-sm [&>*]:duration-200'>
+              <Link to={`/`} className='hover:text-white'>Home</Link>
+              <span> / </span>
+              <Link to={`/more-info/${animeInfo?.id}`} className='max-w-max hover:text-white'>
+                  {(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)}
+              </Link>
+              <span> / </span>
+              <span>{`Ep. ${currentEpNum}`}</span>
+            </div>
             <h2 className="text-3xl mb-10 700res:text-2xl 500res:text-lg 400res:text-base">{`Episode ${currentEpNum} - ${
               episodeInfo?.[currentEpNum - 1].title === null
                 ? "No title"

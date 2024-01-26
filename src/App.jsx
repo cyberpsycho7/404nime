@@ -9,6 +9,7 @@ import WatchPage from './Pages/WatchPage'
 import TrailerContext from './Context/TrailerContext'
 import ReadPage from './Pages/ReadPage'
 import ErrorPage from './Pages/ErrorPage'
+import LoginPage from './Pages/LoginPage'
 
 function App() {
   const [currentWidth, setCurrentWidth] = useState(0)
@@ -40,6 +41,7 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
             <Route path='/more-info/:id' element={<MoreInfoPage currentWidth={currentWidth}/>}/>
             <Route path='/watch/:id' element={<WatchPage currentWidth={currentWidth}/>}/>
             <Route path='/read/:id' element={<ReadPage currentWidth={currentWidth}/>}/>
+            <Route path='/login' element={<LoginPage currentWidth={currentWidth}/>}/>
           <Route path='*' element={<ErrorPage />}/>
           </Route>
         </Routes>

@@ -188,9 +188,9 @@ const ReadPage = ({currentWidth}) => {
                 <a href='#img' className='absolute top-0 left-0 w-1/4 h-full z-20 block' title='PREV' onClick={handlePrev}></a>
                 <a href='#img' className='absolute top-0 right-0 w-3/4 h-full z-20 block' title='NEXT' onClick={handleNext}></a>
                 {currentPagedStyle === "list" ?  
-                    chaptersPages?.map(item => <img key={item?.page} src={`${item?.img}`} alt='png' onLoad={() => setPageLoading(false)}/>)
+                    chaptersPages?.map(item => <img key={item?.page} src={`${item?.img}`} alt='manga page' onLoad={() => setPageLoading(false)}/>)
                 :
-                    <img onLoad={() => setPageLoading(false)} src={`${chaptersPages[currentPage-1]?.img}`} alt="png" />
+                    <img onLoad={() => setPageLoading(false)} src={`${chaptersPages[currentPage-1]?.img}`} alt="manga page" />
                 }
                 
                 {/* {chaptersPages?.map(item => <img src={`${item.img}`}/>)} */}

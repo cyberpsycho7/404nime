@@ -28,7 +28,8 @@ const EditProfilePage = () => {
   }
 
   const handleSaveChangesBasic = () => {
-    axios.patch("http://localhost:3000/users/me", {
+    axios.patch("https://four04nime.onrender.com/users/me", {
+    // axios.patch("http://localhost:3000/users/me", {
       name: newName,
       avatar: newAvatar,
       cover: newCover,

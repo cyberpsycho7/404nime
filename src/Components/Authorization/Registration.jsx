@@ -17,8 +17,8 @@ const Registration = ({isShow, close, toggleAuth}) => {
     const signUpHandler = () => {
         if(!password || !login || !name) return
         setIsLoading(true)
-        axios.post("http://localhost:3000/users/registration", {
-        // axios.post("https://four04nime.onrender.com/users/registration", {
+        // axios.post("http://localhost:3000/users/registration", {
+        axios.post("https://four04nime.onrender.com/users/registration", {
             name, login, password
         })
         .then((res) => {

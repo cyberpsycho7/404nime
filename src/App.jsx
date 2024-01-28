@@ -38,8 +38,8 @@ function App() {
 
     if(localStorage.getItem("JWT")) {
       setUser({isLoading:true, isValid:false})
-      axios.get("http://localhost:3000/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
-      // axios.get("https://four04nime.onrender.com/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
+      // axios.get("http://localhost:3000/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
+      axios.get("https://four04nime.onrender.com/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
       .then(res => {
         // localStorage.setItem("user", JSON.stringify(res.data))
         setUser({...res.data, isValid:true, isLoading:false})

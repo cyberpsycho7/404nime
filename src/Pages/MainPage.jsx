@@ -268,9 +268,7 @@ const MainPage = ({currentWidth}) => {
           ) : null}
 
           <h3 className="text-2xl 1480res:px-[28px] px-2 font-medium 500res:mb-3 500res:mt-16 mb-5 mt-20">
-            <Link to={"/profile/touchme"}>
-              Most Popular
-            </Link>
+            Most Popular
           </h3>
           {popular ? (
             <SwiperComponent

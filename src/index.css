@@ -40,6 +40,11 @@ body {
     border-radius: 12px;
     text-align: center;
     font-weight: 500;
+    transition-duration: 100ms;
+  }
+
+  .btn-base:active {
+    scale: 0.95;
   }
 
   .w-def {

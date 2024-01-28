@@ -37,6 +37,11 @@ const NavBar = () => {
     // return clearTimeout(timeout)
   }
 
+  const toggleAuth = () => {
+    setIsShowRegistration(!isShowRegistration)
+    setIsShowLogin(!isShowLogin)
+  }
+
   useEffect(() => {
     setPathName(location?.pathname.split("/"))
   }, [location])
@@ -65,11 +70,11 @@ const NavBar = () => {
     z-30 bg-gradient-to-b from-black/40 from-20% to-black/5 hover:after:!bg-def-black flex-initial
     ${(!scrollIsZero || searchValue)
       ? "after:bg-def-black"
-      : "after:bg-none"} ${(pathName[1] === "" || pathName[1] === "more-info") ? "" : "after:!bg-def-black"}
+      : "after:bg-none"} ${(pathName[1] === "" || pathName[1] === "more-info" || pathName[1] === "profile") ? "" : "after:!bg-def-black"}
       after:absolute after:content-[""] after:top-0 after:left-0 after:w-full after:h-full after:duration-300 after:-z-10`}
       >
-        <Registration show={isShowRegistration} setIsShowRegistration={setIsShowRegistration}/>
-        <Login show={isShowLogin} setIsShowRegistration={setIsShowLogin}/>
+        <Registration isShow={isShowRegistration} close={() => setIsShowRegistration(false)} toggleAuth={toggleAuth}/>
+        <Login isShow={isShowLogin} close={() => setIsShowLogin(false)} toggleAuth={toggleAuth}/>
       <div
         className={`fixed bottom-28 right-12 h-14 w-14 bg-def-gray text-text-gray hover:text-white hover:border-white
       cursor-pointer border-text-gray border-[2px] rounded-full z-30 flex justify-center items-center materialIcon
@@ -164,17 +169,49 @@ const NavBar = () => {
               </NavLink>
             </li> */}
           </ul>
-          <div className='flex gap-5'>
-            <button onClick={() => {setIsShowLogin(true)}}
-            className="650res:block hidden text-sm py-[10px] px-3 bg-def-black-gray rounded-lg font-medium text-white cursor-pointer">
-              Log in
-            </button>
-            <button onClick={() => {setIsShowRegistration(true)}}
-            className="650res:block hidden text-sm py-[10px] px-3 bg-white rounded-lg font-medium text-def-black cursor-pointer">
-              Get started
-            </button>
-  
-            </div>
+          <div className=''>
+            {user?.isLoading ?
+              <div className={`650res:block hidden w-[160px] rounded-md h-[46px] bg-white/20 animate-pulse`}></div>
+            :
+              (user?.isValid ? 
+                <div className='650res:flex hidden items-center justify-center gap-5 500res:gap-3'>
+                  <div className='cursor-pointer duration-200 flex items-center justify-center gap-2 font-light text-sm text-silver/70 [&_path]:fill-silver/70 hover:text-white [&_path]:hover:fill-white'>
+                    <span>My Library</span>
+                    <span>
+                      <svg
+                        className={`w-5 h-5`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
+                          fill="white"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <Link to={"/profile/me"} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
+                    <img className='w-full h-full rounded-full' src={user.avatar} alt="avatar" />
+                  </Link>
+                </div>
+              :
+                <div className='flex gap-3'>
+                    <button onClick={() => {setIsShowLogin(true)}}
+                    className="650res:block hidden text-sm py-[10px] px-3 bg-def-black-gray rounded-lg font-medium text-white cursor-pointer">
+                      Log in
+                    </button>
+                    <button onClick={() => {setIsShowRegistration(true)}}
+                    className="650res:block hidden text-sm py-[10px] px-3 bg-white rounded-lg font-medium text-def-black cursor-pointer">
+                      Get started
+                    </button>
+                </div>)
+            }
+          </div>
           </div>{" "}
         <div
           className={`w-[440px] h-[52px] border-solid border-[2px] border-white/20 flex
@@ -252,44 +289,49 @@ const NavBar = () => {
             <path d="M3 16.5C2.44772 16.5 2 16.9477 2 17.5V18.5C2 19.0523 2.44772 19.5 3 19.5H21C21.5523 19.5 22 19.0523 22 18.5V17.5C22 16.9477 21.5523 16.5 21 16.5H3Z" fill="white"/>
           </svg>
         </span>
-        {user ? 
-        <div className='flex items-center justify-center gap-7'>
-          <div className='cursor-pointer duration-200 flex items-center justify-center gap-2  text-silver/70 [&_path]:fill-silver/70 hover:text-white [&_path]:hover:fill-white'>
-            <span>My Library</span>
-            <span>
-              <svg
-                className={`w-5 h-5`}
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
-                  fill="white"
-                />
-              </svg>
-            </span>
-          </div>
-          <div className='w-[44px] h-[44px] cursor-pointer rounded-full'>
-            <img className='w-full h-full rounded-full' src={user.avatar} alt="avatar" />
-          </div>
+        <div>
+          {user?.isLoading ?
+            <div className={`w-[180px] 650res:hidden rounded-md h-[56px] bg-white/20 animate-pulse`}></div>
+          :
+            (user?.isValid ? 
+              <div className='flex items-center justify-center gap-7 1200res:gap-5 650res:hidden'>
+                <div className='cursor-pointer duration-200 flex items-center justify-center gap-2  text-silver/70 [&_path]:fill-silver/70 hover:text-white [&_path]:hover:fill-white'>
+                  <span>My Library</span>
+                  <span>
+                    <svg
+                      className={`w-5 h-5`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span>
+                </div>
+                <Link to={"/profile/me"} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
+                  <img className='w-full h-full rounded-full' src={user.avatar} alt="avatar" />
+                </Link>
+              </div>
+            :
+              <div className="flex gap-3 items-center 650res:hidden">
+                <button onClick={() => {setIsShowLogin(true)}}
+                className="btn-base bg-def-black-gray text-white cursor-pointer">
+                  Log in
+                </button>
+                <button onClick={() => {setIsShowRegistration(true)}}
+                className="btn-base bg-white text-def-black cursor-pointer">
+                  Get started
+                </button>
+              </div>)
+          }
         </div>
-        :
-          <div className="flex gap-3 items-center 650res:hidden">
-            <button onClick={() => {setIsShowLogin(true)}}
-            className="btn-base bg-def-black-gray text-white cursor-pointer">
-              Log in
-            </button>
-            <button onClick={() => {setIsShowRegistration(true)}}
-            className="btn-base bg-white text-def-black cursor-pointer">
-              Get started
-            </button>
-          </div>
-        }
       </div>
     </div>
   );

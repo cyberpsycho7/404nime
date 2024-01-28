@@ -161,7 +161,7 @@ const MoreInfoPage = ({currentWidth}) => {
   else if(fetchError) return <ErrorPage errorObj={errorObj}/>
   else return (
     <div className={` opacity-0 animate-fadeInAnimate fill-mode-forward min-h-full`}>
-      <MoreInfoBanner cover={animeInfo?.cover} image={animeInfo?.image} trailer={MALInfo?.trailer?.embed_url} isMusic={animeInfo?.type.toLowerCase() === "music" ? true : false}/>
+      <MoreInfoBanner cover={animeInfo?.cover} image={animeInfo?.image} trailer={MALInfo?.trailer?.embed_url}/>
       <div className='w-full flex justify-center flex-col items-center'>
           <div className="w-[1440px] 700res:block flex gap-24 900res:gap-12 1480res:px-5 1480res:w-full z-10">
             <div

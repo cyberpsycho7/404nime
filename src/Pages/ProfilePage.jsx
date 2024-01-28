@@ -3,6 +3,7 @@ import UserContext from '../Context/UserContext'
 import { compareSync, hashSync } from 'bcryptjs'
 import axios from 'axios'
 import imageToBase64 from 'image-to-base64'
+import MoreInfoBanner from '../Components/MoreInfoPage/MoreInfoBanner'
 
 
 const ProfilePage = () => {
@@ -34,26 +35,7 @@ const ProfilePage = () => {
     }
   return (
     <div className='[&>input]:text-black'>
-        <img src={user?.avatar} alt="ava" />
-        <input onChange={(e) => {
-            // console.log(e.target);
-            const file = e.target.files[0]
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                console.log(reader.result);
-                setAvatar(reader.result)
-            }
-            reader.readAsDataURL(file)
-            // imageToBase64(e.target.files[0]).then(res => console.log(res))
-            // .catch(err => console.log(err))
-        }} type="file" accept='image/png, image/jpg, image/jpeg'/>
-        <h3>{user?.name}</h3>
-        <input type="text" placeholder='new name' value={name} onChange={e => setName(e.target.value)}/>
-        <h3>password</h3>
-        <input type="text" placeholder='old' value={oldPass} onChange={(e) => setOldPass(e.target.value)}/>
-        <input type="text" placeholder='new' value={newPass} onChange={(e) => setNewPass(e.target.value)}/>
-        <button onClick={confirmChanges}>CONFIRM PASS</button>
-        <div>SHESTERENKA</div>
+        <MoreInfoBanner user={user}/>
     </div>
   )
 }

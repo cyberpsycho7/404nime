@@ -13,10 +13,17 @@ import ErrorPage from './Pages/ErrorPage'
 import LoginPage from './Pages/LoginPage'
 import axios from 'axios'
 import ProfilePage from './Pages/ProfilePage'
+import EditProfilePage from './Pages/EditProfilePage'
+import AccountSettingsPage from './Pages/AccountSettingsPage'
 
 function App() {
   const [currentWidth, setCurrentWidth] = useState(0)
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(
+    {
+      isValid: false,
+      isLoading: true
+    }
+  )
   useEffect(() => {
     const resized = (e) => {
       setCurrentWidth(window.innerWidth)
@@ -30,17 +37,19 @@ function App() {
     }, 400)
 
     if(localStorage.getItem("JWT")) {
-      axios.get("https://four04nime.onrender.com/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
+      setUser({isLoading:true, isValid:false})
+      axios.get("http://localhost:3000/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
+      // axios.get("https://four04nime.onrender.com/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
       .then(res => {
         // localStorage.setItem("user", JSON.stringify(res.data))
-        setUser(res.data)
+        setUser({...res.data, isValid:true, isLoading:false})
       })
       .catch(() => {
         // localStorage.removeItem("user")
         // localStorage.removeItem("JWT")
-        setUser(null)
+        setUser({isValid: false, isLoading: false})
       })
-    }
+    } else setUser({isValid: false, isLoading: false})
 
 }, [])
 
@@ -60,6 +69,8 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
             <Route path='/watch/:id' element={<WatchPage currentWidth={currentWidth}/>}/>
             <Route path='/read/:id' element={<ReadPage currentWidth={currentWidth}/>}/>
             <Route path='/profile/:login' element={<ProfilePage/>}/>
+            <Route path='/profile/me/edit-profile' element={<EditProfilePage/>}/>
+            {/* <Route path='/profile/me/account-settings' element={<AccountSettingsPage/>}/> */}
           <Route path='*' element={<ErrorPage />}/>
           </Route>
         </Routes>

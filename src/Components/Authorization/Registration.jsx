@@ -3,6 +3,7 @@ import AuthorizationInput from './AuthorizationInput'
 import axios from 'axios'
 import UserContext from '../../Context/UserContext'
 import PreloaderComponent from '../Other/PreloaderComponent'
+import { useSearchParams } from 'react-router-dom'
 
 const Registration = ({isShow, close, toggleAuth}) => {
     const [name, setName] = useState("")
@@ -11,15 +12,18 @@ const Registration = ({isShow, close, toggleAuth}) => {
     const [errorText, setErrorText] = useState("")
     const [successText, setSuccessText] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams()
 
-    const user = useContext(UserContext)
+    const {user} = useContext(UserContext)
 
     const signUpHandler = () => {
         if(!password || !login || !name) return
         setIsLoading(true)
         // axios.post("http://localhost:3000/users/registration", {
         axios.post("https://four04nime.onrender.com/users/auth/registration", {
-            name, login, password
+            name: name,
+            login: login,
+            password: password
         })
         .then((res) => {
             setSuccessText("Your account has been created")
@@ -27,6 +31,7 @@ const Registration = ({isShow, close, toggleAuth}) => {
             setIsLoading(false)
             localStorage.setItem("JWTAccess", res.data.accessToken)
             localStorage.setItem("JWTRefresh", res.data.refreshToken)
+            setSearchParams({})
             setTimeout(() => {
                 location.reload()
             }, 1000)
@@ -45,9 +50,9 @@ const Registration = ({isShow, close, toggleAuth}) => {
 
   return (
     <div className={`${isShow ? "opacity-100" : "opacity-0 pointer-events-none"} z-50 absolute w-full h-screen top-0 left-0 flex items-center justify-center bg-black/40`}>
-        <div className={`${isShow ? "opacity-100" : "opacity-0 pointer-events-none"} ${isLoading ? "pointer-events-none" : ""} flex flex-col relative max-w-[400px] duration-300
+        <div className={`${isShow ? "opacity-100" : "opacity-0 pointer-events-none"} ${isLoading || user?.isLoading ? "pointer-events-none" : ""} flex flex-col relative max-w-[400px] duration-300
         py-10 px-14 rounded-xl border-[2px] bg-def-black border-def-gray `}>
-            <div className={`${isLoading ? "opacity-100 " : ""} duration-300 bg-def-black rounded-xl flex justify-center items-center w-full h-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 pointer-events-none`}>
+            <div className={`${isLoading || user?.isLoading ? "opacity-100 " : ""} duration-300 bg-def-black rounded-xl flex justify-center items-center w-full h-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 pointer-events-none`}>
                 <PreloaderComponent isLoaded={true} isSearch={false}/>
             </div>
             <span onClick={close} className='absolute top-5 right-5 cursor-pointer'>

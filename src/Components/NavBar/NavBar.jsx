@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import MiniSearchParent from '../Search/MiniSearchParent';
 import logoText from "../../assets/logoText.png"
 import Registration from '../Authorization/Registration';
@@ -22,6 +22,7 @@ const NavBar = () => {
     const [isShowRegistration , setIsShowRegistration] = useState(false)
     const [isShowLogin , setIsShowLogin] = useState(false)
     const location = useLocation()
+    const [searchParams, setSearchParams] = useSearchParams()
     
     const {user} = useContext(UserContext)
     const timeoutRef = useRef()
@@ -44,6 +45,13 @@ const NavBar = () => {
 
   useEffect(() => {
     setPathName(location?.pathname.split("/"))
+    let isLogInLocation = new URLSearchParams(location?.search).get("logIn")
+    let isSignUpLocation = new URLSearchParams(location?.search).get("signUp")
+    if(isLogInLocation === "true") {
+      setIsShowLogin(true)
+    } else if(isSignUpLocation === "true") {
+      setIsShowRegistration(true)
+    }
   }, [location])
 
   useEffect(() => {
@@ -73,8 +81,14 @@ const NavBar = () => {
       : "after:bg-none"} ${(pathName[1] === "" || pathName[1] === "more-info" || pathName[1] === "profile") ? "" : "after:!bg-def-black"}
       after:absolute after:content-[""] after:top-0 after:left-0 after:w-full after:h-full after:duration-300 after:-z-10`}
       >
-        <Registration isShow={isShowRegistration} close={() => setIsShowRegistration(false)} toggleAuth={toggleAuth}/>
-        <Login isShow={isShowLogin} close={() => setIsShowLogin(false)} toggleAuth={toggleAuth}/>
+        <Registration isShow={isShowRegistration} close={() => {
+          setIsShowRegistration(false)
+          setSearchParams([])
+        }} toggleAuth={toggleAuth}/>
+        <Login isShow={isShowLogin} close={() => {
+          setIsShowLogin(false)
+          setSearchParams([])
+        }} toggleAuth={toggleAuth}/>
       <div
         className={`fixed bottom-28 right-12 h-14 w-14 bg-def-gray text-text-gray hover:text-white hover:border-white
       cursor-pointer border-text-gray border-[2px] rounded-full z-30 flex justify-center items-center materialIcon

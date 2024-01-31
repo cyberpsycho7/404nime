@@ -1,5 +1,4 @@
 import axios from "axios"
-import refreshAccessToken from "./refreshAccessToken"
 
 const getUserData = (setUser = () => {} ) => {
     if(localStorage.getItem("JWTAccess")) {

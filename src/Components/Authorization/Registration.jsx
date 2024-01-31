@@ -18,14 +18,15 @@ const Registration = ({isShow, close, toggleAuth}) => {
         if(!password || !login || !name) return
         setIsLoading(true)
         // axios.post("http://localhost:3000/users/registration", {
-        axios.post("https://four04nime.onrender.com/users/registration", {
+        axios.post("https://four04nime.onrender.com/users/auth/registration", {
             name, login, password
         })
         .then((res) => {
             setSuccessText("Your account has been created")
             setErrorText("")
             setIsLoading(false)
-            localStorage.setItem("JWT", res.data.token)
+            localStorage.setItem("JWTAccess", res.data.accessToken)
+            localStorage.setItem("JWTRefresh", res.data.refreshToken)
             setTimeout(() => {
                 location.reload()
             }, 1000)

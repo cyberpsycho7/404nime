@@ -43,6 +43,13 @@ body {
     transition-duration: 100ms;
   }
 
+  .btn-disabled {
+    background-color: rgba(33, 33, 33, .6) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+  }
+
   .btn-base:active {
     scale: 0.95;
   }

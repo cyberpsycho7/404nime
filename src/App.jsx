@@ -13,8 +13,9 @@ import ErrorPage from './Pages/ErrorPage'
 import LoginPage from './Pages/LoginPage'
 import axios from 'axios'
 import ProfilePage from './Pages/ProfilePage'
-import EditProfilePage from './Pages/EditProfilePage'
-import AccountSettingsPage from './Pages/AccountSettingsPage'
+import getUserData from './helpers/getUserData'
+import refreshAccessToken from './helpers/refreshAccessToken'
+import SettingsPage from './Pages/SettingsPage'
 
 function App() {
   const [currentWidth, setCurrentWidth] = useState(0)
@@ -24,6 +25,25 @@ function App() {
       isLoading: true
     }
   )
+  const [isRefreshError, setIsRefreshError] = useState(false)
+
+  const refreshAndGetData = async() => {
+    console.log("refresh start");
+    refreshAccessToken(setUser).then(() => getUserData(setUser))
+    // getUserData(setUser)
+    // const isRefreshed = await refreshAccessToken(setUser)
+    // if(!isRefreshed) {
+    //   console.log(isRefreshed);
+    //   console.log("refresh error");
+    //   setUser({isValid: false, isLoading: false})
+    //   localStorage.removeItem("JWTAccess")
+    //   // setTimeout(() => location)
+    // } else {
+    //   console.log("refresh success");
+    //   getUserData(setUser)
+    //   setTimeout(refreshAndGetData, 3000)
+    // }
+  }
   useEffect(() => {
     const resized = (e) => {
       setCurrentWidth(window.innerWidth)
@@ -31,25 +51,19 @@ function App() {
       console.log(window.innerWidth);
     }
     window.addEventListener("resize", resized)
-
+    
     setTimeout(() => {
       resized()
     }, 400)
+    
+    refreshAndGetData()
+    const interval = setInterval(() => refreshAccessToken(setUser), 290000)
+    // const interval = setInterval(() => refreshAccessToken(setUser, setIsRefreshError), 10000)
+    // const interval = setInterval(refreshAccessToken(setUser, setIsRefreshError), 300000)
 
-    if(localStorage.getItem("JWT")) {
-      setUser({isLoading:true, isValid:false})
-      // axios.get("http://localhost:3000/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
-      axios.get("https://four04nime.onrender.com/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
-      .then(res => {
-        // localStorage.setItem("user", JSON.stringify(res.data))
-        setUser({...res.data, isValid:true, isLoading:false})
-      })
-      .catch(() => {
-        // localStorage.removeItem("user")
-        // localStorage.removeItem("JWT")
-        setUser({isValid: false, isLoading: false})
-      })
-    } else setUser({isValid: false, isLoading: false})
+    return () => {
+      clearInterval(interval)
+    }
 
 }, [])
 
@@ -59,7 +73,7 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
 
 
   return (
-    <UserContext.Provider value={user}>
+    <UserContext.Provider value={{user, setUser, isRefreshError, setIsRefreshError}}>
       <TrailerContext.Provider value={value}>
         <Routes>
           <Route path='/' element={<Layout />}>
@@ -68,8 +82,8 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
             <Route path='/more-info/:id' element={<MoreInfoPage currentWidth={currentWidth}/>}/>
             <Route path='/watch/:id' element={<WatchPage currentWidth={currentWidth}/>}/>
             <Route path='/read/:id' element={<ReadPage currentWidth={currentWidth}/>}/>
-            <Route path='/profile/:login' element={<ProfilePage/>}/>
-            <Route path='/profile/me/edit-profile' element={<EditProfilePage/>}/>
+            <Route path='/profile/:login' element={<ProfilePage currentWidth={currentWidth}/>}/>
+            <Route path='/settings' element={<SettingsPage currentWidth={currentWidth}/>}/>
             {/* <Route path='/profile/me/account-settings' element={<AccountSettingsPage/>}/> */}
           <Route path='*' element={<ErrorPage />}/>
           </Route>

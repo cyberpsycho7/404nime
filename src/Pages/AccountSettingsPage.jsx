@@ -7,7 +7,7 @@ import ReactCrop from 'react-image-crop'
 
 
 const AccountSettingsPage = () => {
-  const user = useContext(UserContext)
+  const {user, setUser} = useContext(UserContext)
 
   const [newName, setNewName] = useState(user?.name)
   const [newLogin, setNewLogin] = useState(user?.login)

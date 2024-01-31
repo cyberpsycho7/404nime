@@ -23,7 +23,7 @@ const NavBar = () => {
     const [isShowLogin , setIsShowLogin] = useState(false)
     const location = useLocation()
     
-    const user = useContext(UserContext)
+    const {user} = useContext(UserContext)
     const timeoutRef = useRef()
 
   const changeValue = (value) => {
@@ -195,7 +195,7 @@ const NavBar = () => {
                       </svg>
                     </span>
                   </div>
-                  <Link to={"/profile/me"} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
+                  <Link to={`/profile/${user?.login}`} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
                     <img className='w-full h-full rounded-full' src={user.avatar} alt="avatar" />
                   </Link>
                 </div>
@@ -315,7 +315,7 @@ const NavBar = () => {
                     </svg>
                   </span>
                 </div>
-                <Link to={"/profile/me"} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
+                <Link to={`/profile/${user?.login}`} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
                   <img className='w-full h-full rounded-full' src={user.avatar} alt="avatar" />
                 </Link>
               </div>

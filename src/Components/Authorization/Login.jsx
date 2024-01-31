@@ -16,7 +16,7 @@ const Login = ({isShow, close, toggleAuth}) => {
     const signUpHandler = () => {
         if(!password || !login) return
         setIsLoading(true)
-        axios.post("https://four04nime.onrender.com/users/login", {
+        axios.post("https://four04nime.onrender.com/users/auth/login", {
         // axios.post("https://four04nime.onrender.com/users/registration", {
             login, password
         })
@@ -24,7 +24,8 @@ const Login = ({isShow, close, toggleAuth}) => {
             setSuccessText("Succesfuly logined")
             setErrorText("")
             setIsLoading(false)
-            localStorage.setItem("JWT", res.data.token)
+            localStorage.setItem("JWTAccess", res.data.accessToken)
+            localStorage.setItem("JWTRefresh", res.data.refreshToken)
             setTimeout(() => {
                 location.reload()
             }, 1000)

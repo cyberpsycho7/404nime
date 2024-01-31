@@ -95,8 +95,8 @@ const ManageAccount = ({currentWidth}) => {
 
 
   return (
-    <div className={`${isLoading ? "pointer-events-none" : ""} flex flex-col w-[1440px] 1480res:w-full mx-auto 1480res:pl-5`}>
-        <h2 className='text-4xl font-medium my-10'>Manage account</h2>
+    <div className={`${isLoading ? "pointer-events-none" : ""} flex flex-col w-[1440px] 1480res:w-full mx-auto 1480res:pl-5 600res:pl-0`}>
+        <h2 className='text-4xl font-medium my-10 600res:pl-0 500res:text-3xl'>Manage account</h2>
         <div className='max-w-[500px] flex flex-col gap-0'>
           <AuthorizationInput type={"text"} placeholder={user?.login} title={"Login"} setValue={setNewLogin} value={newLogin}/>
           <AuthorizationInput type={"password"} placeholder={"New Password"} title={"New Password"} setValue={setNewPassword} value={newPassword}/>

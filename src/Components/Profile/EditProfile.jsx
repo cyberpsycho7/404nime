@@ -71,8 +71,9 @@ const EditProfile = ({currentWidth}) => {
     }
 
     console.dir(file);
-    const reader = new FileReader()
+    // const reader = new FileReader()
     reader.onload = () => {
+      console.log(reader.result);
       const img = document.createElement("img")
       img.src = reader.result
       img.onload = () => {
@@ -133,30 +134,31 @@ const EditProfile = ({currentWidth}) => {
 
 
   return (
-    <div className={`${isLoading ? "pointer-events-none" : ""} flex flex-col w-[1440px] 1480res:w-full mx-auto 1480res:pl-5`}>
-        <h2 className='text-4xl font-medium my-10'>Edit profile</h2>
+    <div className={`${isLoading ? "pointer-events-none" : ""} flex flex-col w-[1440px] 1480res:w-full mx-auto 1480res:pl-5 600res:pl-0`}>
+        <h2 className='text-4xl font-medium my-10 500res:text-3xl'>Edit profile</h2>
         <div className='mb-5'>
           <div className='text-sm text-white/70 mb-2'>{`Avatar ( max 1000x1000 )`}</div>
           <div className='flex gap-4 items-center'>
             <img className='rounded-full w-[90px] h-[90px]' src={newAvatar} alt="avatar"/>
             <div className='flex flex-col gap-2 items-center'>
-              <div className={`${imageIsLoading || isLoading ? "btn-disabled" : ""} relative btn-base bg-white text-def-black w-min h-min !rounded-3xl `}>
+              <div className={`${imageIsLoading || isLoading ? "btn-disabled" : ""} relative btn-base bg-white text-def-black w-min h-min !rounded-3xl 500res:!text-sm 500res:p-3`}>
                 <span>Change</span>
                 <input accept='image/jpeg, image/png, image/gif' className='w-full h-full absolute top-0 left-0 opacity-0 cursor-pointer' type="file" onChange={e => handleChangeImage(e, setNewAvatar, false)}/>
               </div>
-              <span className='text-sm text-white/70'>{"Img only"}</span>
+              <span className='text-sm text-white/70 500res:text-xs'>{"Img only"}</span>
             </div>          </div>
         </div>
         <div className='mb-10'>
           <div className='text-sm text-white/70 mb-2'>{`Cover ( min 1920x330 )`}</div>
-          <div className='flex items-center gap-4 1000res:flex-col'>
-            <div style={{backgroundImage: `url(${newCover})`}} className={`1000res:w-full 1000res:h-[calc(${currentWidth-40}px/5.818181)] w-[800px] h-[137px] rounded-md bg-center bg-cover bg-no-repeat`}></div>
+          <div className='flex items-center gap-4 1000res:flex-col 1000res:items-start 1000res:gap-5'>
+            <div style={{backgroundImage: `url(${newCover})`, height: `calc(${currentWidth - 60}px / 5.818181)`}}
+              className={`${currentWidth <= 1000 ? "600res:!h-[93px]" : "!h-[137px]"} 1000res:w-full w-[800px] rounded-md bg-center bg-cover bg-no-repeat`}></div>
             <div className='flex flex-col gap-2 items-center'>
-              <div className={`${imageIsLoading || isLoading ? "btn-disabled" : ""} relative btn-base bg-white text-def-black w-min h-min !rounded-3xl `}>
+              <div className={`${imageIsLoading || isLoading ? "btn-disabled" : ""} relative btn-base bg-white text-def-black w-min h-min !rounded-3xl 500res:!text-sm 500res:p-3`}>
                 <span>Change</span>
                 <input accept='image/jpeg, image/png, image/gif' className='w-full h-full absolute top-0 left-0 opacity-0 cursor-pointer' type="file" onChange={e => handleChangeImage(e, setNewCover, true)}/>
               </div>
-              <span className='text-sm text-white/70'>{"Img only"}</span>
+              <span className='text-sm text-white/70 500res:text-xs'>{"Img only"}</span>
             </div>
           </div>
         </div>

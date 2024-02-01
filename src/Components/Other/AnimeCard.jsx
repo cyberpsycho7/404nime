@@ -12,7 +12,7 @@ const AnimeCard = ({info, type}) => {
   // console.log(info?.voiceActors);
 
   return (
-    <Link to={`/more-info/${info?.id}`} className={`${type === "character" ? "" : ''}`}
+    <Link to={`/more-info/${info?.id ? info?.id : info?.animeId}`} className={`${type === "character" ? "" : ''}`}
       onClick={(e) => {
         if(type === "character") e.preventDefault()
       }}
@@ -34,7 +34,7 @@ const AnimeCard = ({info, type}) => {
         console.log("leave");}
     }>
       <div
-        style={{ backgroundImage: type === "character" ? `url(${characterImage})` : `url(${info?.image})` }}
+        style={{ backgroundImage: type === "character" ? `url(${characterImage})` : `url(${info?.image})`, backgroundColor: info?.color }}
         className={`duration-200 cursor-pointer p-3 500res:p-2 700res:w-[133px] 700res:h-[196px] 500res:w-[102px] 500res:h-[150px] w-[190px] h-[280px] rounded-xl bg-center bg-cover bg-no-repeat
         relative -z-10`}
       >
@@ -49,21 +49,21 @@ const AnimeCard = ({info, type}) => {
                 <span className="capitalize">
                   {info?.relationType?.replace("_", " ").toLowerCase()}
                 </span>
-                <p className="capitalize">{info?.type?.replace("_", " ").toLowerCase()}</p>
+                <p>{info?.type?.replace("_", " ")}</p>
               </>
             ) : (
               ""
             )}
             {type === "recomm" ? (
               <p>
-                {info?.type}, {info?.episodes} episodes
+                {info?.type.replace("_", " ")}, {info?.episodes} episodes
               </p>
             ) : (
               ""
             )}
             {type === "manga" ? (
               <p>
-                {info?.type} {info?.chapters ? `, ${info?.chapters} chapters` : ""} 
+                {info?.type.replace("_", " ")} {info?.chapters ? `, ${info?.chapters} ${info?.chapters.length == 1 ? "chapter" : "chapters"}` : ""} 
               </p>
             ) : (
               ""

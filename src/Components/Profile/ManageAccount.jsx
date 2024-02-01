@@ -31,9 +31,11 @@ const ManageAccount = ({currentWidth}) => {
     return axios.patch("https://four04nime.onrender.com/users/auth/me", update, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
     .then(resp => {
     //   refreshAccessToken(setUser).then(() => getUserData(setUser))
+
       setPatchResponse(resp)
       setIsLoading(false)
       console.log(resp);
+      return resp
     })
     .catch(err => {
       setPatchResponse(err)
@@ -41,22 +43,25 @@ const ManageAccount = ({currentWidth}) => {
       setOldPassword("")
       setConfirmSave(false)
       console.log(err);
+      return null
     })
 
   }
 
-  const handleSaveChanges = () => {
+  const afterLoginPatch = (accessToken, refreshToken) => {
+    setTimeout(() => {
+      localStorage.setItem("JWTAccess", accessToken)
+      localStorage.setItem("JWTRefresh", refreshToken)
+      refreshAccessToken(setUser).then(() => getUserData(setUser))
+    }, 2000)
+  }
+
+  const handleSaveChanges = async() => {
     setPatchResponse(null)
     setIsLoading(true)
     if(newPassword.length <= 0) {
-        patchReq({login: newLogin})
-        .then(() => {
-            setTimeout(() => {
-                setSearchParams({logIn: true})
-                setUser({isValid: false, isLoading: false})
-            }, 2000)
-        })
-        setConfirmSave(false)
+      const resp = await patchReq({login: newLogin})
+      afterLoginPatch(resp.data.accessToken, resp.data.refreshToken)
     } else if(newLogin === user?.login) {
         patchReq({newPassword: newPassword, oldPassword: oldPassword})
         .then(() => {
@@ -65,13 +70,8 @@ const ManageAccount = ({currentWidth}) => {
             setOldPassword("")
         })
     } else {
-        patchReq({login: newLogin, newPassword: newPassword, oldPassword: oldPassword})
-        .then(() => {
-            setTimeout(() => {
-                setSearchParams({logIn: true})
-                setUser({isValid: false, isLoading: false})
-            }, 2000)
-        })
+      const resp = await patchReq({login: newLogin, newPassword: newPassword, oldPassword: oldPassword})
+      afterLoginPatch(resp.data.accessToken, resp.data.refreshToken)
     }
   }
 

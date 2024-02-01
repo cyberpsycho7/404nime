@@ -70,8 +70,8 @@ const EditProfile = ({currentWidth}) => {
       return
     }
 
-    console.dir(file);
-    // const reader = new FileReader()
+    // console.dir(file);
+    const reader = new FileReader()
     reader.onload = () => {
       console.log(reader.result);
       const img = document.createElement("img")
@@ -139,8 +139,7 @@ const EditProfile = ({currentWidth}) => {
         <div className='mb-5'>
           <div className='text-sm text-white/70 mb-2'>{`Avatar ( max 1000x1000 )`}</div>
           <div className='flex gap-4 items-center'>
-            <img className='rounded-full w-[90px] h-[90px]' src={newAvatar} alt="avatar"/>
-            <div className='flex flex-col gap-2 items-center'>
+          <span style={{ backgroundImage: `url(${newAvatar})` }} className='bg-center bg-no-repeat bg-cover flex-shrink-0 rounded-full w-[90px] h-[90px]'/>            <div className='flex flex-col gap-2 items-center'>
               <div className={`${imageIsLoading || isLoading ? "btn-disabled" : ""} relative btn-base bg-white text-def-black w-min h-min !rounded-3xl 500res:!text-sm 500res:p-3`}>
                 <span>Change</span>
                 <input accept='image/jpeg, image/png, image/gif' className='w-full h-full absolute top-0 left-0 opacity-0 cursor-pointer' type="file" onChange={e => handleChangeImage(e, setNewAvatar, false)}/>
@@ -167,7 +166,7 @@ const EditProfile = ({currentWidth}) => {
           <div className='my-3'>
             <div className='text-sm text-white/70 mb-2'>Bio</div>
             <div className='border-solid border-[2px] border-white/20 flex p-3 rounded-[10px] bg-transparent duration-300 items-center'>
-              <textarea placeholder="Your new bio..." className='w-full h-full bg-transparent outline-none placeholder:font-normal placeholder:text-white/40 text-white' value={newBio} maxLength={500} onChange={e => setNewBio(e.target.value)} cols="20"></textarea>
+              <textarea placeholder="Your new bio..." className='w-full h-full bg-transparent outline-none placeholder:font-normal placeholder:text-white/40 text-white' value={newBio} maxLength={500} onChange={e => setNewBio(e.target.value)} rows="5" cols="20"></textarea>
             </div>
           </div>
           {/* <AuthorizationInput type={"text"} placeholder={user?.login} title={"Login"} setValue={setNewLogin} value={newLogin}/> */}

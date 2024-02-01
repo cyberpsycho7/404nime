@@ -51,6 +51,13 @@ body {
     pointer-events: none !important;
   }
 
+  .btn-disabled path {
+    fill: rgba(255, 255, 255, 0.6) !important;
+  }
+  .btn-disabled svg {
+    fill: rgba(255, 255, 255, 0.6) !important;
+  }
+
   .btn-base:active {
     scale: 0.95;
   }

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import './App.css'
 import { Link, Route, Routes } from 'react-router-dom'
 import Layout from './Pages/Layout'
@@ -16,6 +16,7 @@ import ProfilePage from './Pages/ProfilePage'
 import getUserData from './helpers/getUserData'
 import refreshAccessToken from './helpers/refreshAccessToken'
 import SettingsPage from './Pages/SettingsPage'
+import RefreshTokenIntervalContext from './Context/RefreshTokenIntervalContext'
 
 function App() {
   const [currentWidth, setCurrentWidth] = useState(0)
@@ -26,6 +27,7 @@ function App() {
     }
   )
   const [isRefreshError, setIsRefreshError] = useState(false)
+  const [tokenInterval, setTokenInterval] = useState(null)
 
   const refreshAndGetData = async() => {
     console.log("refresh start");
@@ -56,8 +58,13 @@ function App() {
       resized()
     }, 400)
     
+    if(!localStorage.getItem("JWTRefresh")) {
+      setUser({isValid:false, isLoading:false})
+      return
+    }
     refreshAndGetData()
     const interval = setInterval(() => refreshAccessToken(setUser), 290000)
+    setTokenInterval(interval)
     // const interval = setInterval(() => refreshAccessToken(setUser, setIsRefreshError), 10000)
     // const interval = setInterval(refreshAccessToken(setUser, setIsRefreshError), 300000)
 
@@ -75,6 +82,7 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
   return (
     <UserContext.Provider value={{user, setUser, isRefreshError, setIsRefreshError}}>
       <TrailerContext.Provider value={value}>
+      <RefreshTokenIntervalContext.Provider value={tokenInterval}>
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={<MainPage currentWidth={currentWidth}/>}/>
@@ -88,6 +96,7 @@ const value = {trailerSrc, setTrailerSrc, trailerShow, setTrailerShow}
           <Route path='*' element={<ErrorPage />}/>
           </Route>
         </Routes>
+      </RefreshTokenIntervalContext.Provider>
       </TrailerContext.Provider>
     </UserContext.Provider>
   )

@@ -209,8 +209,8 @@ const NavBar = () => {
                       </svg>
                     </span>
                   </div>
-                  <Link to={`/profile/${user?.login}`} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
-                    <img className='w-full h-full rounded-full' src={user.avatar} alt="avatar" />
+                  <Link to={`/profile/${user?.login}`}>
+                    <div style={{ backgroundImage: `url(${user?.avatar})` }} className='cursor-pointer bg-center bg-no-repeat bg-cover flex-shrink-0 rounded-full w-[44px] h-[44px]'/>
                   </Link>
                 </div>
               :
@@ -329,8 +329,8 @@ const NavBar = () => {
                     </svg>
                   </span>
                 </div>
-                <Link to={`/profile/${user?.login}`} className='w-[44px] h-[44px] cursor-pointer rounded-full'>
-                  <img className='w-full h-full rounded-full' src={user.avatar} alt="avatar" />
+                <Link to={`/profile/${user?.login}`}>
+                  <div style={{ backgroundImage: `url(${user?.avatar})` }} className='cursor-pointer bg-center bg-no-repeat bg-cover flex-shrink-0 rounded-full w-[44px] h-[44px]'/>
                 </Link>
               </div>
             :

@@ -12,7 +12,7 @@ const AuthorizationInput = ({type, placeholder, title, setValue, value}) => {
         <div className='text-sm text-white/70 mb-2'>{title}</div>
         <div className='border-solid border-[2px] border-white/20 flex p-3 rounded-[10px] bg-transparent duration-300 items-center'>
           {type === "password" ?
-            <span className='w-[18px] h-[18px] mr-3' onClick={() => {
+            <span className='w-[18px] h-[18px] mr-3 cursor-pointer active:scale-90 duration-100' onClick={() => {
               toggleType()
             }}>
               {inputType === "password" ?

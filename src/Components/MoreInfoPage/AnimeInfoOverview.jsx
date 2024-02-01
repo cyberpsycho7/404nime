@@ -11,7 +11,11 @@ const AnimeInfoOverview = ({animeInfo, MALInfo, MALWork, show, isManga}) => {
             <div className='flex flex-col gap-5 370res:gap-4 900res:flex-row flex-wrap'>
                 <div>
                     <span>Type</span>
-                    <p>{MALInfo?.type}</p>
+                    {MALInfo ?
+                        <p>{MALInfo?.type}</p>
+                    :
+                        <p>{animeInfo?.type}</p>
+                    }
                 </div>
                 <div>
                     {isManga ?
@@ -37,66 +41,121 @@ const AnimeInfoOverview = ({animeInfo, MALInfo, MALWork, show, isManga}) => {
                     {isManga ?
                         <>
                             <span>Published</span>
-                            <p>{MALInfo?.published?.string}</p>
+                            {MALInfo ?
+                                <p>{MALInfo?.published?.string}</p>
+                            :
+                                <p>{`${animeInfo?.startDate?.month}.${animeInfo?.startDate?.day}.${animeInfo?.startDate?.year} to ${animeInfo?.endDate?.month}.${animeInfo?.endDate?.day}.${animeInfo?.endDate?.year}`}</p>
+                            }
                         </>
                     :
                         <>
                             <span>Aired</span>
-                            <p>{MALInfo?.aired?.string}</p>
+                            {MALInfo ?
+                                <p>{MALInfo?.aired?.string}</p>
+                            :
+                                <p>{`${animeInfo?.startDate?.month}.${animeInfo?.startDate?.day}.${animeInfo?.startDate?.year} to ${animeInfo?.endDate?.month}.${animeInfo?.endDate?.day}.${animeInfo?.endDate?.year}`}</p>
+                            }
                         </>
                     }
                 </div>
                 <div>
                     <span>Status</span>
-                    <p>{!MALInfo?.status ? "?" : MALInfo?.status}</p>
+                    {MALInfo ?
+                        <p>{!MALInfo?.status ? "?" : MALInfo?.status}</p>
+                    :
+                        <p>{!animeInfo?.status ? "?" : animeInfo?.status}</p>
+                    }
                 </div>
                 <div>
                     <span>Season</span>
                     {isManga ?
                         <p className='first-letter:uppercase'>{animeInfo?.season ? animeInfo?.season : "?"}</p>
                     :
-                        <p className='first-letter:uppercase'>{MALInfo?.season} {!MALInfo?.aired?.prop?.from?.year ? "?" : MALInfo?.aired?.prop?.from?.year}</p>
+                        (MALInfo ? 
+                            <p className='first-letter:uppercase'>{MALInfo?.season} {!MALInfo?.aired?.prop?.from?.year ? "?" : MALInfo?.aired?.prop?.from?.year}</p>
+                        :
+                            <p className='first-letter:uppercase'>{animeInfo?.season ? animeInfo?.season : "?"} {!animeInfo?.releaseDate ? "" : animeInfo?.releaseDate}</p>
+                        )
                     }
                 </div>
                 <div>
                     {isManga ? 
                         <>
-                            <span>Authors</span>
-                            <p>{MALInfo?.authors?.map((item, i) => {
-                                if(i+1 === MALInfo?.authors.length) return `${item?.name}`
-                                return `${item?.name} | `
-                            })}</p>
+                            <span>Author</span>
+                            {MALInfo ?
+                                <p>{MALInfo?.authors?.map((item, i) => {
+                                    if(i+1 === MALInfo?.authors.length) return `${item?.name}`
+                                    return `${item?.name} | `
+                                })}</p>
+                            :
+                                <p>{animeInfo?.studios?.map((item, i) => {
+                                    if(i+1 === animeInfo?.studios.length) return `${item?.name}`
+                                    return `${item?.name} | `
+                                })}</p>
+                            }
                         </>
                     :
                         <>
                             <span>Studios</span>
-                            <p>{MALInfo?.studios?.map((item, i) => {
-                                if(i+1 === MALInfo?.studios.length) return `${item?.name}`
-                                return `${item?.name}, `
-                            })}</p>
+                            {MALInfo ?
+                                <p>{MALInfo?.studios?.map((item, i) => {
+                                    if(i+1 === MALInfo?.studios.length) return `${item?.name}`
+                                    return `${item?.name}, `
+                                })}</p>
+                            :
+                                <p>{animeInfo?.studios?.map((item, i) => {
+                                    if(i+1 === animeInfo?.studios.length) return `${item?.name}`
+                                    return `${item?.name}, `
+                                })}</p>
+                            }
                         </>
                     }
                 </div>
                 <div>
                     {isManga ?
                         <>
-                            <span>Approved</span>
-                            <p>{MALInfo?.approved ? "Yes" : "No"}</p>
+                            {MALInfo ?
+                                <>
+                                    <span>Approved</span>
+                                    <p>{MALInfo?.approved ? "Yes" : "No"}</p>
+                                </>
+                            :
+                                null
+                            }
                         </>
                     :
                         <>
-                            <span>Source</span>
-                            <p>{!MALInfo?.source ? "?" : MALInfo?.source}</p>
+                            {MALInfo ?
+                                <>
+                                    <span>Source</span>
+                                    <p>{!MALInfo?.source ? "?" : MALInfo?.source}</p>
+                                </>
+                            :
+                                null
+                            }
                         </>
                     }
                 </div>
                 <div className={`${isManga ? "!hidden" : ""}`}>
-                    <span>Rating</span>
-                    <p>{!MALInfo?.rating ? "?" : MALInfo.rating}</p>
+                    {MALInfo ?
+                        <>
+                            <span>Rating</span>
+                            <p>{!MALInfo?.rating ? "?" : MALInfo.rating}</p>
+                        </>
+                    :
+                        <>
+                            <span>Is Adult</span>
+                            <p>{!animeInfo?.isAdult ? "?" : animeInfo.isAdult}</p>
+                        </>
+                    }
                 </div>
                 <div className={`${isManga ? "!hidden" : ""}`}>
                     <span>Duration</span>
-                    <p>{!MALInfo?.duration ? '?' : MALInfo?.duration}</p>
+                    {MALInfo ?
+                        <p>{!MALInfo?.duration ? '?' : MALInfo?.duration}</p>
+                    :
+                        <p>{!animeInfo?.duration ? '?' : `${animeInfo?.duration} min per ep`}</p>
+                    }
                 </div>
             </div>
         </div>
@@ -104,8 +163,12 @@ const AnimeInfoOverview = ({animeInfo, MALInfo, MALWork, show, isManga}) => {
             <h3 className='text-2xl mb-6 font-medium 370res:text-[20px]'>Desription</h3>
             {/* <p className={`${moreText ? "line-clamp-none" : "900res:line-clamp-[6] line-clamp-[11]"} 400res:text-base 370res:text-sm duration-150 */}
             <p className={`400res:text-base 370res:text-sm duration-150
-            text-text-gray text-lg 370res:!leading-8 !leading-9 text-justify overflow-hidden`}>{moreText ? MALInfo?.synopsis : MALInfo?.synopsis?.slice(0, 400)}</p>
-            <span className={`${MALInfo?.synopsis?.length < 400 ? "hidden" : "block"} cursor-pointer`} onClick={() => setMoreText(!moreText)}>{moreText ? "Hide" : "More"}</span>
+            text-text-gray text-lg 370res:!leading-8 !leading-9 text-justify overflow-hidden`} dangerouslySetInnerHTML={{__html: MALInfo ? (moreText ? `${MALInfo?.synopsis}` : `${MALInfo?.synopsis?.slice(0, 400)}`) : (moreText ? `${animeInfo?.description}` : `${animeInfo?.description?.slice(0, 400)}`)}}></p>
+            {MALInfo ?
+                <span className={`${MALInfo?.synopsis?.length < 400 || !MALInfo?.synopsis ? "hidden" : "block"} cursor-pointer`} onClick={() => setMoreText(!moreText)}>{moreText ? "Hide" : "More"}</span>
+            :
+                <span className={`${animeInfo?.description?.length < 400 || !animeInfo?.description ? "hidden" : "block"} cursor-pointer`} onClick={() => setMoreText(!moreText)}>{moreText ? "Hide" : "More"}</span>
+            }
             {/* <span className={`${moreText ? "block" : "hidden"} cursor-pointer`} onClick={() => setMoreText(false)}>Hide</span> */}
         </div>
     </div>

@@ -116,7 +116,7 @@ const MainPage = ({currentWidth}) => {
 
   useEffect(() => {
     if(!user?.isValid) return
-    axios.get(`http://localhost:3000/users/${user?._id}/anime-history`)
+    axios.get(`https://four04nime.onrender.com/users/${user?._id}/anime-history`)
     .then(res => setAnimeHistory(res.data))
     .catch(e => console.log(e))
   }, [user])

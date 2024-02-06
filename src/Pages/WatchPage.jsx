@@ -52,7 +52,7 @@ const WatchPage = () => {
       patchAnimeHistory()
       return
     }
-    axios.post(`http://localhost:3000/users/me/anime-history`, {
+    axios.post(`https://four04nime.onrender.com/users/me/anime-history`, {
       userId: user._id,
       animeId: id,
       title: animeInfo?.title,
@@ -71,7 +71,7 @@ const WatchPage = () => {
 
   const patchAnimeHistory = () => {
     if(watchBefore) return
-    axios.patch(`http://localhost:3000/users/me/anime-history/${animeInfo?.id}`, {
+    axios.patch(`https://four04nime.onrender.com/users/me/anime-history/${animeInfo?.id}`, {
       lastEpisode: episodeRef.current,
       time: timeRef.current
     }, {headers: {"Authorization" : `Bearer ${localStorage.getItem("JWTAccess")}`}})
@@ -109,7 +109,7 @@ const WatchPage = () => {
   //FETCH USERS ANIME HISTORY
   useEffect(() => {
     if(!user.isValid) return
-    axios.get(`http://localhost:3000/users/${user._id}/anime-history`)
+    axios.get(`https://four04nime.onrender.com/users/${user._id}/anime-history`)
     .then(res => setAnimeHistory(res.data))
     .catch(err => console.log(err))
   }, [user])

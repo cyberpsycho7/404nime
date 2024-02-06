@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const LongerAnimeCard = ({item}) => {
   return (
-    <Link to={`${item?.time ? `/watch/${item?.id}?ep=${item?.lastEpisode}&time=${item?.time}` : `/more-info/${item?.id}`} `}>
+    <Link to={`${item?.time ? `/watch/${item?.animeId}?ep=${item?.lastEpisode}&time=${item?.time}` : `/more-info/${item?.id}`} `}>
         <div style={{backgroundImage: `url(${item?.cover ? item?.cover : item?.image})`, backgroundColor: `${item?.color}`}}
         className={`bg-def-gray bg-center bg-no-repeat bg-cover w-full h-[200px] flex-col flex justify-center 
         items-start p-7  gap-2 700res:h-[150px] 500res:h-[110px] pr-[110px] 500res:pr-[80px] 330res:pr-7

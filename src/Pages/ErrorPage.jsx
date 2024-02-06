@@ -3,7 +3,6 @@ import img from '../assets/notfoundpagechainsaw.png'
 import { Link } from 'react-router-dom'
 
 const ErrorPage = ({errorObj = null}) => {
-  console.log(errorObj);
   return (
     <div className='opacity-0 animate-fadeInAnimate fill-mode-forward flex w-full h-full relative justify-center items-center flex-col px-5'>
         <img src={img} alt='404' className='absolute right-0 bottom-0 h-[400px] 800res:brightness-50 -z-10 450res:h-[300px]'/>

@@ -6,7 +6,7 @@ import ErrorSearch from '../Components/Search/ErrorSearch'
 import CatalogCheckboxesComponent from '../Components/AdvancedSearchPage/CatalogSheckboxesComponent'
 import CatologYearSelectComponent from '../Components/AdvancedSearchPage/CatologYearSelectComponent'
 
-const AdvancedSearchPage = ({currentWidth}) => {
+const AdvancedSearchPage = () => {
   const [yearOpened, setYearOpened] = useState(true)
   const [seasonOpened, setSeasonOpened] = useState(false)
   const [genresOpened, setGenresOpened] = useState(false)
@@ -107,7 +107,6 @@ const AdvancedSearchPage = ({currentWidth}) => {
     if(genresArrCopy.includes(genre)) genresArrCopy = genresArrCopy.filter(item => item !== genre)
     else genresArrCopy.push(genre) 
 
-    console.log(genresArrCopy);
     setSelectedGenres(genresArrCopy)
   }
 
@@ -152,7 +151,6 @@ const AdvancedSearchPage = ({currentWidth}) => {
     .then(resp => {
       document.title = `Anime Catalog sorted by ${((sort.find(item => item.id === selectedSort)).title)} - 404NIME`
       setSearchResult(resp.data.results)
-      console.log(resp);
     })
     .catch(() => setSearchError(true))
     .finally(() => {
@@ -184,17 +182,12 @@ const AdvancedSearchPage = ({currentWidth}) => {
   }
 
   useEffect(() => {
-    console.log(searchParams);
-  }, [searchParams])
-
-  useEffect(() => {
     fetchAnime()
   }, [])
 
   return (
     <div className="w-[1440px] mx-auto 1480res:w-full 1480res:m-0 1480res:px-5">
       <div className="flex 900res:flex-col 900res:gap-6 gap-10 justify-between mt-24 900res:mt-10">
-        {/* catalog divs ||*/}
         <div className="w-full flex-shrink min-w-[200px]"> 
           <h2 className="text-3xl font-medium mb-8">Catalog</h2>          
           <CatologYearSelectComponent setYearOpened={setYearOpened} yearOpened={yearOpened}
@@ -212,11 +205,8 @@ const AdvancedSearchPage = ({currentWidth}) => {
             componentHeight={198} mainTitle={"Airing Status"} componentArray={airingStatus}
             selectedBoxes={selectedAiringStatus} changeSelectedBoxes={changeAiringStatus} selectedBoxesIsArray={false}/>
         </div>
-        {/* search, submit, reset, sortBy, grid */}
         <div className="flex-shrink-0">
-          {/* search, submit, reset, sortBy */}
           <div className="flex justify-between 600res:flex-wrap 600res:justify-center gap-5 w-full mb-8 [&>*]:flex-shrink-0">
-            {/* INPUT */}
             <div
               className="w-full !flex-shrink 650res:flex-shrink-0 ml-5 600res:ml-0 h-[52px] border-solid border-[2px] border-white/20 flex
                     p-3 rounded-xl bg-white/20
@@ -235,8 +225,8 @@ const AdvancedSearchPage = ({currentWidth}) => {
                   >
                     <path
                       className="fill-white/80 500res:fill-white"
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M10 0.5C4.75329 0.5 0.5 4.75329 0.5 10C0.5 15.2467 4.75329 19.5 10 19.5C12.082 19.5 14.0076 18.8302 15.5731 17.6944L20.2929 22.4142C20.6834 22.8047 21.3166 22.8047 21.7071 22.4142L22.4142 21.7071C22.8047 21.3166 22.8047 20.6834 22.4142 20.2929L17.6944 15.5731C18.8302 14.0076 19.5 12.082 19.5 10C19.5 4.75329 15.2467 0.5 10 0.5ZM3.5 10C3.5 6.41015 6.41015 3.5 10 3.5C13.5899 3.5 16.5 6.41015 16.5 10C16.5 13.5899 13.5899 16.5 10 16.5C6.41015 16.5 3.5 13.5899 3.5 10Z"
                       fill="#ffffff"
                     />
@@ -253,9 +243,7 @@ const AdvancedSearchPage = ({currentWidth}) => {
                 onChange={(e) => setSearchValue(e.target.value.trimStart())}
               />
             </div>
-            {/* other btns */}
             <div className="mr-5 600res:mr-0 flex items-center gap-3">
-              {/* submit */}
               <div
                 onClick={() => fetchAnime()}
                 className="flex font-medium lex items-center gap-2 cursor-pointer p-3 450res:p-2 hover:bg-white/30 [&>span>svg]:hover:scale-125 active:scale-90 duration-150 rounded-lg"
@@ -270,8 +258,8 @@ const AdvancedSearchPage = ({currentWidth}) => {
                     fill="none"
                   >
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M10 0.5C4.75329 0.5 0.5 4.75329 0.5 10C0.5 15.2467 4.75329 19.5 10 19.5C12.082 19.5 14.0076 18.8302 15.5731 17.6944L20.2929 22.4142C20.6834 22.8047 21.3166 22.8047 21.7071 22.4142L22.4142 21.7071C22.8047 21.3166 22.8047 20.6834 22.4142 20.2929L17.6944 15.5731C18.8302 14.0076 19.5 12.082 19.5 10C19.5 4.75329 15.2467 0.5 10 0.5ZM3.5 10C3.5 6.41015 6.41015 3.5 10 3.5C13.5899 3.5 16.5 6.41015 16.5 10C16.5 13.5899 13.5899 16.5 10 16.5C6.41015 16.5 3.5 13.5899 3.5 10Z"
                       fill="white"
                     />
@@ -279,7 +267,6 @@ const AdvancedSearchPage = ({currentWidth}) => {
                 </span>
                 <span>Submit</span>
               </div>
-              {/* reset */}
               <div
                 onClick={() => resetParams()}
                 className="flex items-center gap-2 cursor-pointer p-3 450res:p-2 hover:bg-white/30 [&>span>svg]:hover:-rotate-180 active:scale-90 duration-150 rounded-lg"
@@ -301,7 +288,6 @@ const AdvancedSearchPage = ({currentWidth}) => {
                 </span>
                 <span>Reset</span>
               </div>
-              {/* sortBy */}
               <div className="relative ">
                 <div className={` ${sortOpened ? "opacity-100" : "opacity-0 pointer-events-none"} duration-200 overflow-hidden absolute top-14 flex flex-col gap-2 p-3 right-0 bg-def-black border border-white/20 rounded-xl text-white w-[200px]`}>
                     {sort?.map(item => <div onClick={() => {changeSort(item?.id); setSortOpened(false)}}
@@ -317,8 +303,8 @@ const AdvancedSearchPage = ({currentWidth}) => {
                           fill="none"
                         >
                           <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
+                            fillRule="evenodd"
+                            clipRule="evenodd"
                             d="M21.2287 6.60355C21.6193 6.99407 21.6193 7.62723 21.2287 8.01776L10.2559 18.9906C9.86788 19.3786 9.23962 19.3814 8.84811 18.9969L2.66257 12.9218C2.26855 12.5349 2.26284 11.9017 2.64983 11.5077L3.35054 10.7942C3.73753 10.4002 4.37067 10.3945 4.7647 10.7815L9.53613 15.4677L19.1074 5.89644C19.4979 5.50592 20.1311 5.50591 20.5216 5.89644L21.2287 6.60355Z"
                             fill="white"
                           />
@@ -343,8 +329,8 @@ const AdvancedSearchPage = ({currentWidth}) => {
                     fill="none"
                   >
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
                       fill="white"
                     />
@@ -353,7 +339,6 @@ const AdvancedSearchPage = ({currentWidth}) => {
               </div>
             </div>
           </div>
-          {/* anime grid */}
           {preloader ? <PreloaderComponent isSearch={true} isLoaded={isLoaded}/>
           :
             searchError ? <ErrorSearch isMini={false} notFound={false}/> 

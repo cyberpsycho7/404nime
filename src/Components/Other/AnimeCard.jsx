@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const AnimeCard = ({info, type}) => {
-  // console.log(info);
   const [characterTitle, setCharacterTitle] = useState(info?.name?.full)
   const [characterImage, setCharacterImage] = useState(info?.image)
   const [characterRole, setCharacterRole] = useState(info?.role)
-  useEffect(() => {
-    
-  }, [])
-  // console.log(info?.voiceActors);
 
   return (
     <Link to={`/more-info/${info?.id ? info?.id : info?.animeId}`} className={`${type === "character" ? "" : ''}`}
@@ -24,14 +19,13 @@ const AnimeCard = ({info, type}) => {
         setCharacterTitle(info?.voiceActors[0].name?.full)
         setCharacterImage(info?.voiceActors[0].image)
         setCharacterRole(info?.voiceActors[0].language)
-        console.log("enter");
       }}
       onMouseLeave={(e) => {
         if(info?.voiceActors === undefined || info?.voiceActors.length < 1 || type !== "character") return
         setCharacterTitle(info?.name?.full)
         setCharacterImage(info?.image)
         setCharacterRole(info?.role)
-        console.log("leave");}
+      }
     }>
       <div
         style={{ backgroundImage: type === "character" ? `url(${characterImage})` : `url(${info?.image})`, backgroundColor: info?.color }}
@@ -80,11 +74,6 @@ const AnimeCard = ({info, type}) => {
             ) : (
               ""
             )}
-            {/* {type === "recentEpisodes" ? (
-              <p className="capitalize">{info?.episodeNumber+" ep"} {info?.type}</p>
-            ) : (
-              ""
-            )} */}
           </span>
         </div>
       </div>

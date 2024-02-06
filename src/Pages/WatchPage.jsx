@@ -1,193 +1,176 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import React, {  useContext, useEffect, useRef, useState } from 'react'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import PreloaderComponent from '../Components/Other/PreloaderComponent';
 import PlayerComponent from '../Components/Other/PlayerComponent';
 import AnimeCard from '../Components/Other/AnimeCard';
 import ErrorPage from './ErrorPage';
+import UserContext from '../Context/UserContext';
 
 
-const WatchPage = ({currentWidth}) => {
-    const {id} = useParams()
-    const epListRef = useRef()
-    const player = useRef()
-    const search = useLocation().search
-    const initEp = Number(new URLSearchParams(search).get("ep"))
-    const initTimeSearch = Number(new URLSearchParams(search).get("time"))
+const WatchPage = () => {
+  const {user} = useContext(UserContext)
+  const {id} = useParams()
+  const epListRef = useRef()
+  const timeRef = useRef()
+  const animeInfoRef = useRef()
+  const animeHistoryRef = useRef()
+  const episodeRef = useRef()
+  const search = useLocation().search
+  const initEp = Number(new URLSearchParams(search).get("ep"))
+  const initTimeSearch = Number(new URLSearchParams(search).get("time"))
 
-    useLocation().search = ""
-
-    const [animeInfo, setAnimeInfo] = useState(null)
-    const [preloader, setPreloader] = useState(true)
-    const [fetchError, setFetchError] = useState(false)
-    const [errorObj, setErrorObj] = useState({
-      message: "Unexpected Error",
-      response: {
-        data: {
-          message: "Refresh page or try again later."
-        }
-      }
-    })
-    const [videoPreloader, setVideoPreloader] = useState(true)
-    const [isLoaded, setIsLoaded] = useState(false)
-    const [currentEpNum, setCurrentEpNum] = useState(initEp === 0 ? 1 : initEp)
-    const [currentActiveUrl, setCurrentActiveUrl] = useState(null)
-    const [animeHistory, setAnimeHistory] = useState(JSON.parse(localStorage.getItem("animeHistory")))
-    const [currentTime, setCurrentTime] = useState(initTimeSearch)
-    const [initTime, setInitTime] = useState(initTimeSearch)
-    const [watchBefore, setWatchBefore] = useState(false)
-    const [historyEpisode, setHistoryEpisode] = useState(null)
-    const [historyTime, setHistoryTime] = useState(null)
-    const [isPlaying, setIsPlaying] = useState(false)
-    const [episodeInfo, setEpisodeInfo] = useState(null)
-
-    const timeRef = useRef()
-    const animeInfoRef = useRef()
-    const animeHistoryRef = useRef()
-    const episodeRef = useRef()
-
-    const changeStorage = () => {
-      console.log(timeRef.current);
-      console.log(animeInfoRef.current);
-      console.log(animeHistoryRef.current);
-      console.log(episodeRef.current);
-      if(!animeInfoRef.current) return
-      if(!animeHistoryRef.current) {
-        console.log("create anime hiistory");
-        localStorage.setItem("animeHistory", JSON.stringify([{
-          ...animeInfoRef.current, lastTime: timeRef.current, lastWatchEpisode: episodeRef.current
-        }]))
-      } else {
-        const index = animeHistoryRef.current.findIndex(item => item?.id === id)
-        if(index === -1) {
-          console.log("add new anime to history");
-          let newHistory = [{...animeInfoRef.current, lastTime: timeRef.current, lastWatchEpisode: episodeRef.current}, ...animeHistoryRef.current]
-          console.log(newHistory);
-          localStorage.setItem("animeHistory", JSON.stringify(newHistory))
-        } else {
-          if(timeRef.current === 0 && episodeRef.current === 1) return
-          console.log("update anime history");
-          // let newHistory = animeHistoryRef.current[index].lastTime = timeRef.current
-          let newHistory = [...animeHistoryRef.current]
-          newHistory[index].lastTime = timeRef.current
-          newHistory[index].lastWatchEpisode = episodeRef.current
-          console.log(newHistory,"before");
-          const updatedAnimeObj = newHistory[index]
-          newHistory = newHistory.filter(item => item?.id !== id)
-          newHistory.unshift(updatedAnimeObj)
-          console.log(newHistory, "after");
-          localStorage.setItem("animeHistory", JSON.stringify(newHistory))
-        }
+  const [animeInfo, setAnimeInfo] = useState(null)
+  const [preloader, setPreloader] = useState(true)
+  const [fetchError, setFetchError] = useState(false)
+  const [errorObj, setErrorObj] = useState({
+    message: "Unexpected Error",
+    response: {
+      data: {
+        message: "Refresh page or try again later."
       }
     }
+  })
+  const [videoPreloader, setVideoPreloader] = useState(true)
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [currentEpNum, setCurrentEpNum] = useState(initEp === 0 ? 1 : initEp)
+  const [currentActiveUrl, setCurrentActiveUrl] = useState(null)
+  const [animeHistory, setAnimeHistory] = useState(null)
+  const [currentTime, setCurrentTime] = useState(initTimeSearch)
+  const [initTime, setInitTime] = useState(initTimeSearch)
+  const [watchBefore, setWatchBefore] = useState(false)
+  const [historyEpisode, setHistoryEpisode] = useState(null)
+  const [historyTime, setHistoryTime] = useState(null)
+  const [episodeInfo, setEpisodeInfo] = useState([])
+  const [isAnimeInHistory, setIsAnimeInHistory] = useState(true)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [intervalTime, setIntervalTime] = useState(false)
 
-    const completeLoading = (state) => {
-      setFetchError(state)
-      setIsLoaded(false)
-      setVideoPreloader(false)
-      setTimeout(() => {
-        setPreloader(false)
-      }, 300)
+  const postAnimeToHistory = () => {
+    setIntervalTime(false)
+    if(isAnimeInHistory) {
+      patchAnimeHistory()
+      return
     }
+    axios.post(`http://localhost:3000/users/me/anime-history`, {
+      userId: user._id,
+      animeId: id,
+      title: animeInfo?.title,
+      releaseDate: animeInfo?.releaseDate,
+      genres: animeInfo?.genres,
+      type: animeInfo?.type,
+      cover: animeInfo?.cover,
+      image: animeInfo?.image,
+      lastEpisode: currentEpNum,
+      time: currentTime
+    }, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
+    .then((res) => setIsAnimeInHistory(true))
+    .catch((err) => console.log(err))
 
-    const setEpisodeFromHistory = () => {
-      if(!watchBefore) return
-      console.log(historyTime);
-      setCurrentEpNum(historyEpisode)
-      setInitTime(historyTime)
-      setWatchBefore(false)
-    }
+  }
 
-    useEffect(() => {
-      if(!animeHistory) return
-      let index = animeHistory.findIndex(item => item?.id === id)
-      if(index !== -1) {
-        setWatchBefore(true)
-        setHistoryEpisode(animeHistory[index].lastWatchEpisode)
-        setHistoryTime(animeHistory[index].lastTime)
-        console.log("wathced");
-      } 
-    }, [animeHistory])
+  const patchAnimeHistory = () => {
+    if(watchBefore) return
+    axios.patch(`http://localhost:3000/users/me/anime-history/${animeInfo?.id}`, {
+      lastEpisode: episodeRef.current,
+      time: timeRef.current
+    }, {headers: {"Authorization" : `Bearer ${localStorage.getItem("JWTAccess")}`}})
+    .catch(err => console.log(err))
+  }
 
-    useEffect(() => {
-      console.log(isPlaying);
-    }, [isPlaying])
-    
-    useEffect(() => {
-      timeRef.current = currentTime
-      animeInfoRef.current = animeInfo
-      animeHistoryRef.current = animeHistory
-      episodeRef.current = currentEpNum
-    }, [currentTime, animeInfo, animeHistory, currentEpNum])
+  const completeLoading = (state) => {
+    setFetchError(state)
+    setIsLoaded(false)
+    setVideoPreloader(false)
+    setTimeout(() => {
+      setPreloader(false)
+    }, 300)
+  }
 
-    useEffect(() => {
-      console.log(episodeInfo);
-    }, [episodeInfo])
-    
-    
-    useEffect(() => {
-      setPreloader(true)
-      setIsLoaded(true)
-      if(!id) return
-      axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}`)
-      .then(resp => {
-        setAnimeInfo(resp.data)
-        axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=zoro`)
-        .then(zoroResp => {
-          // setEpisodeInfo(resp.data.episodes)
-          if(zoroResp.data.episodes.length === resp.data.episodes.length) setEpisodeInfo(zoroResp.data.episodes)
-          else setEpisodeInfo(resp.data.episodes)
-          console.log(zoroResp.data.episodes);
-        })
-        .catch((e) => {
-          setEpisodeInfo(resp.data.episodes)
-        })
-      }).catch((e) => {
-        completeLoading(true)
-        setErrorObj(e)
+  const setEpisodeFromHistory = () => {
+    if(!watchBefore) return
+    setCurrentEpNum(historyEpisode)
+    setInitTime(historyTime)
+    setWatchBefore(false)
+  }
+
+  //CHECK IF ANIME WAS WATCH BEFORE
+  useEffect(() => {
+    if(!animeHistory) return
+    let index = animeHistory.findIndex(item => item?.animeId === id)
+    if(index !== -1) {
+      setWatchBefore(true)
+      setIsAnimeInHistory(true)
+      setHistoryEpisode(animeHistory[index].lastEpisode)
+      setHistoryTime(animeHistory[index].time)
+    } else setIsAnimeInHistory(false)
+  }, [animeHistory])
+
+  //FETCH USERS ANIME HISTORY
+  useEffect(() => {
+    if(!user.isValid) return
+    axios.get(`http://localhost:3000/users/${user._id}/anime-history`)
+    .then(res => setAnimeHistory(res.data))
+    .catch(err => console.log(err))
+  }, [user])
+  
+  //SET REFS (BCS WHILE UNMOUNT STATES ARE NULL)
+  useEffect(() => {
+    timeRef.current = currentTime
+    animeInfoRef.current = animeInfo
+    animeHistoryRef.current = animeHistory
+    episodeRef.current = currentEpNum
+  }, [currentTime, animeInfo, animeHistory, currentEpNum])
+  
+  //FETCH ANIME INFO
+  useEffect(() => {
+    setPreloader(true)
+    setIsLoaded(true)
+    if(!id) return
+    axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}`)
+    .then(resp => {
+      setAnimeInfo(resp.data)
+      axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=zoro`)
+      .then(zoroResp => {
+        if(zoroResp.data.episodes.length === resp.data.episodes.length) setEpisodeInfo(zoroResp.data.episodes)
+        else setEpisodeInfo(resp.data.episodes)
       })
-    }, [id])
+      .catch((e) => setEpisodeInfo(resp.data.episodes))
+    }).catch((e) => {
+      setErrorObj(e)
+      completeLoading(true)
+    })
+  }, [id])
+  
+  //FETCH CURRENT VIDEO URL
+  useEffect(() => {
+    if(!animeInfo) return
+    setVideoPreloader(true)
+    document.title = (animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji) + " - Episode " + currentEpNum + " - Watch online on 404NIME"
+      axios.get(`https://march-api1.vercel.app/meta/anilist/watch/${animeInfo?.episodes[currentEpNum-1].id}`)
+      .then(resp => {
+        let sources = resp.data.sources
+        let defaultSource = sources.filter(item => item?.quality === "default")[0].url
+        setCurrentActiveUrl(defaultSource)
+        completeLoading(false)
+      }).catch((e) => {
+        setErrorObj(e)
+        completeLoading(true)
+      }).finally(() => setSearchParams([]))
     
-    useEffect(() => {
-      console.log(animeInfo);
-        if(!animeInfo) return
-        setVideoPreloader(true)
-        document.title = (animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji) + " - Episode " + currentEpNum + " - Watch online on 404NIME"
-        // setPreloader(true)
-          axios.get(`https://march-api1.vercel.app/meta/anilist/watch/${animeInfo?.episodes[currentEpNum-1].id}`)
-          .then(resp => {
-            let sources = resp.data.sources
-            let defaultSource = sources.filter(item => item?.quality === "default")[0].url
-            console.log(defaultSource);
-            setCurrentActiveUrl(defaultSource)
-          }).finally(() => {
-            // setIsLoaded(false)
-            // setVideoPreloader(false)
-            // setTimeout(() => {
-            //   setPreloader(false)
-            // }, 300)
-            completeLoading(false)
-          }).catch((e) => {
-            completeLoading(true)
-            setErrorObj(e)
-          })
+  }, [currentEpNum, animeInfo, id])
         
-      }, [currentEpNum, animeInfo, id])
-      
-      // header.title = "haha"
-      // const changeEpisodeNumber = ()
-      
-      useEffect(() => {
-        const interval = setInterval(() => {
-          changeStorage()
-          console.log("changed storage interval");
-        }, 30000)
-        return () => {
-          changeStorage()
-          clearInterval(interval)
-          console.log("unmount");
-        }
-      }, [])
+  //INTERVAL HISTORY EVERY 30 SECONDS
+  useEffect(() => {
+    if(!user?.isValid || !animeInfo) return
+    const interval = setInterval(() => setIntervalTime(true), 30000)
+    return () => clearInterval(interval)
+  }, [user, animeInfo])
+
+  useEffect(() => {
+    if(!intervalTime) return
+    postAnimeToHistory()
+  }, [intervalTime])
 
   if(preloader) return <PreloaderComponent isLoaded={isLoaded} />;
   if(fetchError) return <ErrorPage errorObj={errorObj}/>
@@ -196,30 +179,6 @@ const WatchPage = ({currentWidth}) => {
       <div className="w-[1440px] flex gap-[20px] mx-5 mt-5">
         <div className="w-full h-min">
           <div>
-            {/* <Player
-              ref={player}
-              currentPoster={`${animeInfo?.episodes[currentEpNum-1].image}`}
-              >
-              <Hls version="latest">
-                <source
-                  data-src={`${currentActiveUrl}`}
-                  type="application/x-mpegURL"
-                />
-              </Hls>
-              <DefaultUi noControls>
-                <Spinner />
-                <DefaultControls hideOnMouseLeave activeDuration={2000} />
-                <Controls
-                  pin="center"
-                  align="center"
-                  justify="center"
-                  style={{ "--vm-control-scale": 1.7 }}
-                >
-                  <PlaybackControl />
-                </Controls>
-              </DefaultUi>
-              <Skeleton/>
-            </Player> */}
             <div className={`relative`}>
               <div
                 className={`${
@@ -272,15 +231,14 @@ const WatchPage = ({currentWidth}) => {
               </div>
               <PlayerComponent
                 title={`Episode ${currentEpNum} - ${
-                  episodeInfo[currentEpNum - 1]?.title === null
+                  episodeInfo?.[currentEpNum - 1]?.title === null
                     ? "No title"
-                    : episodeInfo[currentEpNum - 1]?.title
+                    : episodeInfo?.[currentEpNum - 1]?.title
                 }`}
                 src={currentActiveUrl}
                 poster={animeInfo?.episodes[currentEpNum - 1]?.image}
                 setCurrentTime={setCurrentTime}
                 initTime={initTime}
-                setIsPlaying={setIsPlaying}
               />
             </div>
             <div className="hidden 1000res:flex h-14  mt-3 rounded-md  items-center justify-start w-full bg-def-gray px-3">
@@ -295,8 +253,7 @@ const WatchPage = ({currentWidth}) => {
                       Number(e.target[0].value) <= animeInfo?.episodes.length
                     )
                       setCurrentEpNum(Number(e.target[0].value));
-                  } catch {}
-
+                  } catch(err) {console.log(err)}
                 }}>
                   <input
                     placeholder={`1 - ${animeInfo?.totalEpisodes}`}
@@ -315,11 +272,10 @@ const WatchPage = ({currentWidth}) => {
                     }}
                   >
                     {animeInfo?.episodes?.map((item) => (
-                      <option className="bg-white/30" value={item.number}>
+                      <option className="bg-white/30" value={item.number} key={item?.number}>
                         {item.number} - Episode
                       </option>
                     ))}
-                    {/* <option val></option> */}
                   </select>
                 </div>
               </div>
@@ -336,28 +292,14 @@ const WatchPage = ({currentWidth}) => {
               <span>{`Ep. ${currentEpNum}`}</span>
             </div>
             <h2 className="text-3xl mb-10 700res:text-2xl 500res:text-lg 400res:text-base">{`Episode ${currentEpNum} - ${
-              episodeInfo?.[currentEpNum - 1].title === null
+              episodeInfo?.[currentEpNum - 1]?.title === null
                 ? "No title"
-                : episodeInfo?.[currentEpNum - 1].title
+                : episodeInfo?.[currentEpNum - 1]?.title
             }`}</h2>
-            {/* [&>a>div]:w-[calc(100%-75%-40px)] */}
             <div
               className={`border-t-2 border-t-white/30 pt-12 w-full 
               `}
             >
-              {/* <SwiperComponent currentWidth={currentWidth} type={"anime"} items={animeInfo?.recommendations}/> */}
-              {/* <div style={{backgroundImage: `url(${animeInfo?.image})`}} className='w-[200px] h-[300px] bg-center bg-no-repeat bg-cover rounded-lg'></div> */}
-              {/* <Swiper
-                spaceBetween={20}
-                slidesPerView={4}
-                onSlideChange={() => console.log("slide change")}
-                onSwiper={(swiper) => console.log(swiper)}
-              >
-                {animeInfo?.recommendations.map(item => 
-                <SwiperSlide>
-                  <AnimeCard info={item} type={"anime"} />
-                </SwiperSlide>)}
-              </Swiper> */}
               <h3 className="text-3xl mb-8">You'll also like it</h3>
               <div
                 className="w-full relative flex flex-wrap gap-5
@@ -434,7 +376,6 @@ const WatchPage = ({currentWidth}) => {
                   <div className="text-sm text-text-gray">
                     Episode {item?.number}
                   </div>
-                  {/* <div className='text-xs text-text-gray'>{item.createdAt.slice(0, 10)}</div> */}
                 </div>
               </div>
             ))}

@@ -1,10 +1,10 @@
 import axios from 'axios'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MangaPagination from '../Components/Reader/MangaPagination'
 import PreloaderComponent from '../Components/Other/PreloaderComponent'
 import { Link, useLocation, useParams } from 'react-router-dom'
 
-const ReadPage = ({currentWidth}) => {
+const ReadPage = () => {
     const {id} = useParams()
     const search = useLocation().search
     const initChapter = Number(new URLSearchParams(search).get("chapter"))
@@ -39,7 +39,6 @@ const ReadPage = ({currentWidth}) => {
         let chaptersCopy = [...data?.chapters]
         let fixedChapters = chaptersCopy?.filter(item => item?.pages !== 0)
         fixedMangaInfo.chapters = fixedChapters
-        console.log(fixedMangaInfo, "FIXEDEDEDED");
         return fixedMangaInfo
     }
     
@@ -47,7 +46,6 @@ const ReadPage = ({currentWidth}) => {
         if(currentPagedStyle === "list") {
             if(Number(currentChapterIndex) >= (mangaInfo?.chapters?.length - 1)) return
             setCurrentChapterIndex(Number(currentChapterIndex) + 1)
-            // setCurrentChapter(mangaInfo?.chapters[currentChapterIndex]?.chapterNumber)
         }
         else {
             if(Number(currentPage) >= Number(mangaInfo?.chapters[currentChapterIndex].pages)) {
@@ -56,11 +54,11 @@ const ReadPage = ({currentWidth}) => {
             } else setCurrentPage(Number(currentPage)+1)
         }
     }
+
     const handlePrev = () => {
         if(currentPagedStyle === "list") {
             if(Number(currentChapterIndex) <= 0) return
             setCurrentChapterIndex(Number(currentChapterIndex) - 1)
-            // setCurrentChapter(mangaInfo?.chapters[currentChapterIndex]?.chapterNumber)
         }
         else {
             if(Number(currentPage) <= 1) {
@@ -70,83 +68,57 @@ const ReadPage = ({currentWidth}) => {
         }
     }
     
-    // const getChapter = (info) => {
-        //     // let copy = [...info?.chapters]
-        //     // let chapterObj = copy.filter(item => Number(item?.chapterNumber) === Number(currentChapter))
-        //     // console.log(copy.findIndex(item => item === chapterObj[0]));
-        //     // FIXME
-        //     setCurrentChapterIndex(copy.findIndex(item => item === chapterObj[0]))
-        //     setPageCount(chapterObj[0].pages)
-        //     return chapterObj[0].id
-        // }
+    const fetchMangaChapter = (chapterId) => {
+        axios.get(`https://march-api1.vercel.app/meta/anilist-manga/read?chapterId=${chapterId}&provider=mangadex`, {
+            headers: {Referer: "localhost:8888"}
+        })
+        .then(resp => {
+            setChaptersPages(resp.data)
+            completeLoading(false)
+        })
+        .catch(() => completeLoading(true))
+    }
         
-        const fetchMangaChapter = (chapterId) => {
-            console.log("SATAT");
-            axios.get(`https://march-api1.vercel.app/meta/anilist-manga/read?chapterId=${chapterId}&provider=mangadex`, {
-                headers: {Referer: "localhost:8888"}
-            })
-            .then(resp => {
-                setChaptersPages(resp.data)
-                console.log(resp.data);
-                completeLoading(false)
-            })
-            .catch(() => completeLoading(true))
-        }
-        
-        useEffect(() => {
-            setFetchError(false)
-            
-            if(!currentPagedStyle) setCurrentPagedStyle("paged")
-            
-            axios.get(`https://march-api1.vercel.app/meta/anilist-manga/info/${id}?provider=mangadex`)
-            .then(resp => {
-                let fixedMangaInfo = fixChapters(resp.data)
-                handleChangeTitle(fixedMangaInfo?.title, fixedMangaInfo?.chapters[currentChapterIndex].chapterNumber)
-                setMangaInfo(fixedMangaInfo)
-                setCurrentChapter(fixedMangaInfo?.chapters[currentChapterIndex].chapterNumber)
-                fetchMangaChapter(fixedMangaInfo?.chapters[currentChapterIndex].id)
-            })
-            .catch((e) => {
-                console.log(e);
-                completeLoading(true)
-            })
-        }, [])  
-        
-        
-        useEffect(() => {
-            if(!mangaInfo) return
-            console.log(currentChapter);
-            console.log(currentChapterIndex);
-            setIsLoading(true)
-            setPreloader(true)
-            setCurrentPage(1)
-            handleChangeTitle(mangaInfo?.title, mangaInfo?.chapters[currentChapterIndex].chapterNumber)
-            setCurrentChapter(mangaInfo?.chapters[currentChapterIndex].chapterNumber)
-            fetchMangaChapter(mangaInfo?.chapters[currentChapterIndex].id)
-        }, [currentChapterIndex])
-        
-        useEffect(() => {
-            setPageLoading(true)
-        }, [currentPage])
-        
-        useEffect(() => {
-            if(!currentPagedStyle) return
-            console.log(currentPagedStyle);
-            localStorage.setItem("pagedStyle", `${currentPagedStyle}`)
-        }, [currentPagedStyle])
-        // useEffect(() => {
-            //     delete window.document.referrer;
-            //     window.document.__defineGetter__('referrer', function () {
-                //         return "localhost:8888";
-                //     });
-                // }, [])
-                
-                
+    useEffect(() => {
+        setFetchError(false)
+        if(!currentPagedStyle) setCurrentPagedStyle("paged")
+        axios.get(`https://march-api1.vercel.app/meta/anilist-manga/info/${id}?provider=mangadex`)
+        .then(resp => {
+            let fixedMangaInfo = fixChapters(resp.data)
+            handleChangeTitle(fixedMangaInfo?.title, fixedMangaInfo?.chapters[currentChapterIndex].chapterNumber)
+            setMangaInfo(fixedMangaInfo)
+            setCurrentChapter(fixedMangaInfo?.chapters[currentChapterIndex].chapterNumber)
+            fetchMangaChapter(fixedMangaInfo?.chapters[currentChapterIndex].id)
+        })
+        .catch((e) => {
+            console.log(e);
+            completeLoading(true)
+        })
+    }, [])  
+    
+    
+    useEffect(() => {
+        if(!mangaInfo) return
+        setIsLoading(true)
+        setPreloader(true)
+        setCurrentPage(1)
+        handleChangeTitle(mangaInfo?.title, mangaInfo?.chapters[currentChapterIndex].chapterNumber)
+        setCurrentChapter(mangaInfo?.chapters[currentChapterIndex].chapterNumber)
+        fetchMangaChapter(mangaInfo?.chapters[currentChapterIndex].id)
+    }, [currentChapterIndex])
+    
+    useEffect(() => {
+        setPageLoading(true)
+    }, [currentPage])
+    
+    useEffect(() => {
+        if(!currentPagedStyle) return
+        localStorage.setItem("pagedStyle", `${currentPagedStyle}`)
+    }, [currentPagedStyle]) 
                 
     if(preloader) return <PreloaderComponent isLoaded={isLoading}/>
     else if(fetchError) return <div className='text-4xl text-white'>ERROR WHILE FETCHING TRY AGAIN LATER <button onClick={() => history.back()} className='btn-base'>BACK</button></div>
     return (
-
         <div className='opacity-0 animate-fadeInAnimate fill-mode-forward w-[1160px] mx-auto 1200res:!w-full 1200res:!px-5 flex flex-col items-center py-16'>
             <div className='w-full flex items-start flex-col gap-10 mb-3'>
                 <h2 className='text-3xl'>{mangaInfo?.title?.english ? mangaInfo?.title?.english : mangaInfo?.title?.romaji} - Chapter {currentChapter}</h2>
@@ -161,9 +133,7 @@ const ReadPage = ({currentWidth}) => {
             <MangaPagination
                 chaptersPages={chaptersPages}
                 mangaInfo={mangaInfo}
-                setCurrentChapter={setCurrentChapter}
                 setCurrentPage={setCurrentPage}
-                currentChapter={currentChapter}
                 currentPage={currentPage}
                 currentPagedStyle={currentPagedStyle}
                 setCurrentPagedStyle={setCurrentPagedStyle}
@@ -172,7 +142,6 @@ const ReadPage = ({currentWidth}) => {
                 setCurrentChapterIndex={setCurrentChapterIndex}
                 handleNext={handleNext}
                 handlePrev={handlePrev}
-
             />
             <div className={`relative flex flex-col items-center my-10`} id='img'>
                 <div className={`${pageLoading && currentPagedStyle !== "list" ? "bg-black/50 backdrop-blur-sm" : ""}
@@ -192,8 +161,6 @@ const ReadPage = ({currentWidth}) => {
                 :
                     <img onLoad={() => setPageLoading(false)} src={`${chaptersPages[currentPage-1]?.img}`} alt="manga page" />
                 }
-                
-                {/* {chaptersPages?.map(item => <img src={`${item.img}`}/>)} */}
             </div>
             <MangaPagination
                 chaptersPages={chaptersPages}
@@ -209,7 +176,6 @@ const ReadPage = ({currentWidth}) => {
                 handleNext={handleNext}
                 handlePrev={handlePrev}
             />
-
         </div>
     )
 }

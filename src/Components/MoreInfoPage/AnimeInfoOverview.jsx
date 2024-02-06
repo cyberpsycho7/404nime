@@ -161,7 +161,6 @@ const AnimeInfoOverview = ({animeInfo, MALInfo, MALWork, show, isManga}) => {
         </div>
         <div>
             <h3 className='text-2xl mb-6 font-medium 370res:text-[20px]'>Desription</h3>
-            {/* <p className={`${moreText ? "line-clamp-none" : "900res:line-clamp-[6] line-clamp-[11]"} 400res:text-base 370res:text-sm duration-150 */}
             <p className={`400res:text-base 370res:text-sm duration-150
             text-text-gray text-lg 370res:!leading-8 !leading-9 text-justify overflow-hidden`} dangerouslySetInnerHTML={{__html: MALInfo ? (moreText ? `${MALInfo?.synopsis}` : `${MALInfo?.synopsis?.slice(0, 400)}`) : (moreText ? `${animeInfo?.description}` : `${animeInfo?.description?.slice(0, 400)}`)}}></p>
             {MALInfo ?
@@ -169,7 +168,6 @@ const AnimeInfoOverview = ({animeInfo, MALInfo, MALWork, show, isManga}) => {
             :
                 <span className={`${animeInfo?.description?.length < 400 || !animeInfo?.description ? "hidden" : "block"} cursor-pointer`} onClick={() => setMoreText(!moreText)}>{moreText ? "Hide" : "More"}</span>
             }
-            {/* <span className={`${moreText ? "block" : "hidden"} cursor-pointer`} onClick={() => setMoreText(false)}>Hide</span> */}
         </div>
     </div>
   )

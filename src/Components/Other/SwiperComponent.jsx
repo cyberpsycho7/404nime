@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect} from 'react'
 import { SwiperSlide, Swiper } from 'swiper/react';
 import AnimeCard from '../Other/AnimeCard';
 import LongerAnimeCard from "../Other/LongerAnimeCard"
@@ -17,12 +17,10 @@ const SwiperComponent = ({currentWidth, items, type}) => {
 
   useEffect(() => {
     let perPage;
-    // console.log(currentWidth);
     if (currentWidth <= 700 && currentWidth > 500) {
       perPage = (currentWidth - 88) / 133;
       setNum(perPage - ((perPage - 1) * 6) / 100);
       setJustify(12);
-      // console.log("---");
     } else if (currentWidth >= 1440) {
       perPage = 1400 / 190;
       setNum(perPage - ((perPage - 1) * 11) / 100);
@@ -36,16 +34,10 @@ const SwiperComponent = ({currentWidth, items, type}) => {
       setNum(perPage - ((perPage - 1) * 10) / 100);
       setJustify(20);
     }
-    // console.log(relations);
   }, [currentWidth]);
   
   useEffect(() => {
-    if(swiper) {
-      setTimeout(() => {
-        swiper.slideTo(0, 500)
-        console.log("slided");
-      }, 500)
-    }
+    if(swiper) setTimeout(() => swiper.slideTo(0, 500), 500)
   }, [items, swiper])
 
 
@@ -97,28 +89,18 @@ const SwiperComponent = ({currentWidth, items, type}) => {
           spaceBetween={type === "animeLonger" ? "20" : justify}
           slidesPerView={type === "animeLonger" ? (currentWidth < 1000 ? 1.2 : 1.4) : num}
           initialSlide={0}
-          onReachBeginning={() => {
-            setShowLeftArrow(false);
-            console.log("reach beg");
-          }}
-          onReachEnd={(swiper) => {
-            setShowRightArrow(false);
-            console.log("reach end");
-          }}
+          onReachBeginning={() => setShowLeftArrow(false)}
+          onReachEnd={() => setShowRightArrow(false)}
           onSlideChange={(swiper) => {
             if (!swiper.isBeginning) setShowLeftArrow(true);
-            // else setShowLeftArrow(true);
             if (!swiper.isEnd) setShowRightArrow(true);
-            // else setShowRightArrow(true);
           }}
-          onSwiper={(swiper) => {
-            setSwiper(swiper);
-          }}
+          onSwiper={(swiper) => setSwiper(swiper)}
         >
           {items?.map((item) => (
             <SwiperSlide
               key={
-                type === "character" ? item?.name?.full : (item?.title?.english ? item?.title?.english : item?.title?.romaji)
+                type === "character" ? item?.name?.full : item?.id
               }
             >
               {type === "animeLonger" ? 

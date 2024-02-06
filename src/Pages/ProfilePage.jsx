@@ -1,14 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../Context/UserContext'
-import { compareSync, hashSync } from 'bcryptjs'
 import axios from 'axios'
 import MoreInfoBanner from '../Components/MoreInfoPage/MoreInfoBanner'
 import { useParams } from 'react-router-dom'
 import PreloaderComponent from '../Components/Other/PreloaderComponent'
 import ErrorPage from './ErrorPage'
 import PopUpModal from '../Components/Other/PopUpModal'
-import AnimeCard from '../Components/Other/AnimeCard'
-import AnimeInfoNavTab from '../Components/MoreInfoPage/AnimeInfoNavTab'
 import AnimeCardGrid from '../Components/Profile/AnimeCardGrid'
 import UserListBtn from '../Components/Profile/UserListBtn'
 
@@ -62,21 +59,6 @@ const ProfilePage = ({currentWidth}) => {
         setIsWatchedLoading(true)
     }
 
-    const fetchUserList = () => {
-        setListLoadStart()
-        axios.get(`https://four04nime.onrender.com/users/${login}/favorites`, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
-        .then(res => setFavorite(res.data))
-        .catch(err => console.log(err))
-        .finally(() => setIsFavoriteLoading(false))
-        axios.get(`https://four04nime.onrender.com/users/${login}/to-watch`, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
-        .then(res => setToWatch(res.data))
-        .catch(err => console.log(err))
-        .finally(() => setIsToWatchLoading(false))
-        axios.get(`https://four04nime.onrender.com/users/${login}/watched`, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
-        .then(res => setWatched(res.data))
-        .catch(err => console.log(err))
-        .finally(() => setIsWatchedLoading(false))
-    }
 
     const deleteOneFromUserList = (type, id) => {
         let route;
@@ -98,11 +80,27 @@ const ProfilePage = ({currentWidth}) => {
         .finally(() => setIsDeleteLoading(false))
     }
 
+    useEffect(() => {
+        if(!user) return
+        setListLoadStart()
+        axios.get(`https://four04nime.onrender.com/users/${user?._id}/favorites`, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
+        .then(res => setFavorite(res.data))
+        .catch(err => console.log(err))
+        .finally(() => setIsFavoriteLoading(false))
+        axios.get(`https://four04nime.onrender.com/users/${user?._id}/to-watch`, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
+        .then(res => setToWatch(res.data))
+        .catch(err => console.log(err))
+        .finally(() => setIsToWatchLoading(false))
+        axios.get(`https://four04nime.onrender.com/users/${user?._id}/watched`, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
+        .then(res => setWatched(res.data))
+        .catch(err => console.log(err))
+        .finally(() => setIsWatchedLoading(false))
+
+    }, [user])
 
     useEffect(() => {
         if(!login) return
         startLoading()
-        // axios.get(`http://localhost:3000/users/${login}`,)
         axios.get(`https://four04nime.onrender.com/users/${login}`,)
         .then(res => {
             document.title = `404NIME - ${res.data.name}'s profile`
@@ -111,7 +109,6 @@ const ProfilePage = ({currentWidth}) => {
         })
         .catch(err => setErrorObj(err))
         .finally(() => completeLoading())
-        fetchUserList()
     }, [login])
 
 
@@ -128,17 +125,17 @@ const ProfilePage = ({currentWidth}) => {
             <div className='relative py-10 pr-20 1480res:p-[2.5rem_5rem_2.5rem_2.5rem] 500res:p-[2.5rem_1.25rem_2.5rem_1.25rem] 700res:p-10 h-full flex justify-between items-center gap-[10px]'>
                 <div className={`${showModal ? "opacity-100" : ""} duration-300 absolute top-10 left-1/2 -translate-x-1/2 p-5 500res:text-sm 500res:p-3 bg-green-500 rounded-xl opacity-0 pointer-events-none`}>Copied to clipboard.</div>
                 <div className='flex gap-10 500res:gap-7 items-center w-full 700res:flex-col 700res:items-center'>
-                    <span style={{ backgroundImage: `url(${user?.avatar})` }} className='bg-center bg-no-repeat bg-cover flex-shrink-0 rounded-full w-[170px] h-[170px] 900res:w-[150px] 900res:h-[150px] 500res:w-[140px] 500res:h-[140px]'/>
+                    <img src={user?.avatar} alt="user-avatar" className='flex-shrink-0 rounded-full w-[170px] h-[170px] 900res:w-[150px] 900res:h-[150px] 500res:w-[140px] 500res:h-[140px]'/>
                     <div className='w-full overflow-hidden 700res:flex 700res:items-center 700res:flex-col'>
                         <h3 className='text-5xl font-medium mb-2 900res:text-[2rem] 500res:text-2xl 370res:text-xl'>{user?.name}</h3>
                         <div className=' text-lg text-white/70 mb-2 900res:text-[1rem] 900res:mb-1 flex gap-2 900res:gap-1 items-center cursor-pointer
-                            [&_path]:hover:fill-white [&>span]:hover:text-white [&_path]:duration-200 w-max' onClick={() => {
+                            [&_path]:hover:fill-white [&_span]:hover:text-white [&_path]:duration-200 w-max' onClick={() => {
                                 navigator.clipboard.writeText(location.href)
                                 openModal()
                             }}>
                             <span className='w-[20px] h-[20px]'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                    <g clip-path="url(#clip0_405_1425)">
+                                    <g clipPath="url(#clip0_405_1425)">
                                     <path d="M12 0C8.81845 0.00344108 5.7682 1.26883 3.51851 3.51852C1.26882 5.76821 0.0034331 8.81846 -7.97655e-06 12C-0.125008 21.574 11.159 27.429 18.9 21.817C19.0622 21.7041 19.2006 21.5602 19.307 21.3937C19.4135 21.2271 19.4859 21.0412 19.5203 20.8465C19.5546 20.6519 19.5502 20.4523 19.5072 20.2594C19.4641 20.0665 19.3834 19.884 19.2696 19.7223C19.1558 19.5607 19.0112 19.4232 18.8441 19.3176C18.677 19.2121 18.4906 19.1406 18.2958 19.1073C18.101 19.074 17.9015 19.0795 17.7088 19.1236C17.5161 19.1676 17.334 19.2493 17.173 19.364C11.42 23.582 2.86299 19.146 2.99999 12C3.47199 0.0699997 20.529 0.0719995 21 12V13.5C21 13.8978 20.842 14.2794 20.5607 14.5607C20.2793 14.842 19.8978 15 19.5 15C19.1022 15 18.7206 14.842 18.4393 14.5607C18.158 14.2794 18 13.8978 18 13.5V12C17.748 4.071 6.25099 4.072 5.99999 12C6.00998 13.1628 6.35671 14.2978 6.99823 15.2677C7.63974 16.2376 8.54857 17.0009 9.61475 17.4651C10.6809 17.9293 11.8588 18.0746 13.0058 17.8835C14.1529 17.6923 15.22 17.1729 16.078 16.388C16.6736 17.0856 17.4682 17.5844 18.3553 17.8178C19.2424 18.0511 20.1796 18.0078 21.0414 17.6937C21.9032 17.3795 22.6484 16.8095 23.1772 16.06C23.7059 15.3104 23.993 14.4172 24 13.5V12C23.9966 8.81846 22.7312 5.76821 20.4815 3.51852C18.2318 1.26883 15.1815 0.00344108 12 0V0ZM12 15C11.2043 15 10.4413 14.6839 9.87867 14.1213C9.31606 13.5587 8.99999 12.7956 8.99999 12C8.99999 11.2044 9.31606 10.4413 9.87867 9.87868C10.4413 9.31607 11.2043 9 12 9C12.7956 9 13.5587 9.31607 14.1213 9.87868C14.6839 10.4413 15 11.2044 15 12C15 12.7956 14.6839 13.5587 14.1213 14.1213C13.5587 14.6839 12.7956 15 12 15Z" fill="rgb(255 255 255 / 0.7)"/>
                                     </g>
                                     <defs>
@@ -156,11 +153,11 @@ const ProfilePage = ({currentWidth}) => {
                     </div>
                 </div>
             </div>
-            <div className={`my-10 1480res:px-5 flex items-center gap-5 justify-center [&>span]:flex [&>span]:gap-2 [&>span]:duration-300 [&>span]:btn-base
-                [&>span]:items-center 450res:[&>span]:text-xs 450res:[&>span]:p-3 450res:[&_svg]:w-4 450res:[&_svg]:h-4`}>
+            <div className={`my-10 1480res:px-5 flex gap-5 items-center justify-center [&_span]:flex [&_span]:gap-2 [&_span]:duration-300 [&_span]:btn-base
+                [&_span]:items-center 450res:[&_span]:text-xs 450res:[&_span]:p-3 450res:[&_svg]:w-4 450res:[&_svg]:h-4 600res:flex-wrap`}>
                 <UserListBtn openedBlock={openedBlock} isLoading={isFavoriteLoading} setOpenedBlock={setOpenedBlock} num={1} title={"Favorite"}>
                     <svg className='w-5 h-5' width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_405_1496)">
+                        <g clipPath="url(#clip0_405_1496)">
                         <path d="M17.25 1.85071C16.2243 1.86063 15.2152 2.11065 14.3035 2.58073C13.3918 3.05081 12.6029 3.72788 12 4.55771C11.397 3.72788 10.6081 3.05081 9.69644 2.58073C8.78476 2.11065 7.77565 1.86063 6.74996 1.85071C4.89173 1.92491 3.13848 2.73189 1.87358 4.09517C0.608672 5.45846 -0.0649657 7.26713 -4.03235e-05 9.12571C-4.03235e-05 13.6777 4.67396 18.5507 8.59996 21.8377C9.55329 22.6393 10.7589 23.0788 12.0045 23.0788C13.25 23.0788 14.4556 22.6393 15.409 21.8377C19.331 18.5507 24.009 13.6777 24.009 9.12571C24.0738 7.26563 23.399 5.45564 22.1322 4.0921C20.8653 2.72856 19.1098 1.9226 17.25 1.85071ZM13.477 19.5387C13.0634 19.8869 12.5401 20.0779 11.9995 20.0779C11.4588 20.0779 10.9355 19.8869 10.522 19.5387C5.74196 15.5307 2.99996 11.7357 2.99996 9.12571C2.9362 8.06292 3.29424 7.01789 3.99634 6.21749C4.69844 5.4171 5.68793 4.92596 6.74996 4.85071C7.81199 4.92596 8.80148 5.4171 9.50358 6.21749C10.2057 7.01789 10.5637 8.06292 10.5 9.12571C10.5 9.52353 10.658 9.90506 10.9393 10.1864C11.2206 10.4677 11.6021 10.6257 12 10.6257C12.3978 10.6257 12.7793 10.4677 13.0606 10.1864C13.3419 9.90506 13.5 9.52353 13.5 9.12571C13.4362 8.06292 13.7942 7.01789 14.4963 6.21749C15.1984 5.4171 16.1879 4.92596 17.25 4.85071C18.312 4.92596 19.3015 5.4171 20.0036 6.21749C20.7057 7.01789 21.0637 8.06292 21 9.12571C21 11.7357 18.258 15.5307 13.477 19.5387Z" fill="white"/>
                         </g>
                         <defs>
@@ -177,7 +174,7 @@ const ProfilePage = ({currentWidth}) => {
                 </UserListBtn>
                 <UserListBtn openedBlock={openedBlock} isLoading={isWatchedLoading} setOpenedBlock={setOpenedBlock} num={3} title={"Watched"}>
                     <svg className='w-5 h-5' width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_405_1637)">
+                        <g clipPath="url(#clip0_405_1637)">
                         <path d="M7.74919 20.6625C7.06793 20.6628 6.41457 20.392 5.93325 19.9099L0.443061 14.4217C-0.147687 13.8308 -0.147687 12.8729 0.443061 12.282C1.034 11.6912 1.99191 11.6912 2.58284 12.282L7.74919 17.4483L21.4172 3.78034C22.0081 3.18959 22.966 3.18959 23.5569 3.78034C24.1477 4.37128 24.1477 5.32919 23.5569 5.92012L9.56513 19.9099C9.08381 20.392 8.43045 20.6628 7.74919 20.6625Z" fill="white"/>
                         </g>
                         <defs>
@@ -188,11 +185,29 @@ const ProfilePage = ({currentWidth}) => {
                     </svg>
                 </UserListBtn>
                 {user?.login === userContext?.user?.login ?
-                    <button onClick={() => setIsEditing(!isEditing)} className={`${isEditing ? "bg-def-gray" : ""} btn-base flex justify-center items-center`}>
-                        <svg className='w-5 h-5' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M15.0004 24H9.00042V20.487C7.95768 20.1181 6.99187 19.5601 6.15142 18.841L3.10742 20.6L0.107422 15.4L3.15042 13.645C2.95053 12.5574 2.95053 11.4426 3.15042 10.355L0.107422 8.6L3.10742 3.4L6.15142 5.159C6.99187 4.43993 7.95768 3.88194 9.00042 3.513V0H15.0004V3.513C16.0432 3.88194 17.009 4.43993 17.8494 5.159L20.8934 3.4L23.8934 8.6L20.8504 10.355C21.0503 11.4426 21.0503 12.5574 20.8504 13.645L23.8934 15.4L20.8934 20.6L17.8494 18.842C17.0089 19.5607 16.0431 20.1184 15.0004 20.487V24ZM11.0004 22H13.0004V18.973L13.7514 18.779C14.9834 18.4598 16.1048 17.8101 16.9944 16.9L17.5374 16.347L20.1604 17.862L21.1604 16.13L18.5404 14.617L18.7464 13.871C19.0851 12.6439 19.0851 11.3481 18.7464 10.121L18.5404 9.375L21.1604 7.862L20.1604 6.13L17.5374 7.649L16.9944 7.1C16.1043 6.19134 14.983 5.54302 13.7514 5.225L13.0004 5.027V2H11.0004V5.027L10.2494 5.221C9.01741 5.54015 7.89603 6.18988 7.00642 7.1L6.46342 7.653L3.84042 6.134L2.84042 7.866L5.46042 9.379L5.25442 10.125C4.91578 11.3521 4.91578 12.6479 5.25442 13.875L5.46042 14.621L2.84042 16.134L3.84042 17.866L6.46342 16.351L7.00642 16.904C7.89651 17.8127 9.01785 18.461 10.2494 18.779L11.0004 18.973V22ZM12.0004 16C11.2093 16 10.4359 15.7654 9.77814 15.3259C9.12034 14.8864 8.60765 14.2616 8.3049 13.5307C8.00215 12.7998 7.92294 11.9956 8.07728 11.2196C8.23162 10.4437 8.61258 9.73098 9.17199 9.17157C9.7314 8.61216 10.4441 8.2312 11.2201 8.07686C11.996 7.92252 12.8003 8.00173 13.5312 8.30448C14.2621 8.60723 14.8868 9.11992 15.3263 9.77772C15.7658 10.4355 16.0004 11.2089 16.0004 12C16.0004 13.0609 15.579 14.0783 14.8288 14.8284C14.0787 15.5786 13.0613 16 12.0004 16ZM12.0004 10C11.6049 10 11.2182 10.1173 10.8893 10.3371C10.5604 10.5568 10.304 10.8692 10.1527 11.2346C10.0013 11.6001 9.96168 12.0022 10.0389 12.3902C10.116 12.7781 10.3065 13.1345 10.5862 13.4142C10.8659 13.6939 11.2223 13.8844 11.6102 13.9616C11.9982 14.0387 12.4003 13.9991 12.7658 13.8478C13.1312 13.6964 13.4436 13.44 13.6634 13.1111C13.8831 12.7822 14.0004 12.3956 14.0004 12C14.0004 11.4696 13.7897 10.9609 13.4146 10.5858C13.0396 10.2107 12.5309 10 12.0004 10Z" fill="white"/>
-                        </svg>
-                    </button>
+                    <span onClick={() => setIsEditing(!isEditing)} className={`${isEditing ? "bg-def-gray" : ""} justify-self-end ml-auto 600res:ml-0`}>
+                        <div
+                            className={`${isEditing ? "bg-white border-none" : ""}
+                            duration-300 w-5 h-5 bg-def-black border-2 border-text-gray flex justify-center items-center rounded-[4px]`}
+                        >
+                            <svg
+                            className="w-4 h-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            >
+                            <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M21.2287 6.60355C21.6193 6.99407 21.6193 7.62723 21.2287 8.01776L10.2559 18.9906C9.86788 19.3786 9.23962 19.3814 8.84811 18.9969L2.66257 12.9218C2.26855 12.5349 2.26284 11.9017 2.64983 11.5077L3.35054 10.7942C3.73753 10.4002 4.37067 10.3945 4.7647 10.7815L9.53613 15.4677L19.1074 5.89644C19.4979 5.50592 20.1311 5.50591 20.5216 5.89644L21.2287 6.60355Z"
+                                fill="#121212"
+                            />
+                            </svg>
+                        </div>
+                        <p>Edit</p>
+                    </span>
                 : null}
             </div>
             <div className='relative'>

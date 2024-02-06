@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, pageCount, currentChapterIndex, currentPagedStyle, setCurrentPagedStyle, chaptersPages, mangaInfo, currentChapter, currentPage, setCurrentChapter, setCurrentPage}) => {
-
-    
+const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, currentChapterIndex, currentPagedStyle, setCurrentPagedStyle, chaptersPages, mangaInfo, currentPage, setCurrentPage}) => {
   return (
     <div className='w-full flex justify-between items-center'>
         <div className='flex items-center gap-5'>
@@ -21,7 +19,6 @@ const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, pageCo
                             Chapter {item?.chapterNumber}
                         </option>
                     ))}
-                    {/* <option val></option> */}
                     
                 </select>
                 <span className='absolute right-[5px] top-1/2 -translate-y-1/2 '>
@@ -98,8 +95,8 @@ const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, pageCo
                             fill="none"
                         >
                             <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
+                                fillRule="evenodd"
+                                clipRule="evenodd"
                                 d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
                                 fill="black"
                             />
@@ -122,8 +119,8 @@ const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, pageCo
                             fill="none"
                         >
                             <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
+                                fillRule="evenodd"
+                                clipRule="evenodd"
                                 d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
                                 fill="black"
                             />

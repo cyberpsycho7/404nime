@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import MainBanner from '../Components/MainPage/MainBanner'
 import SwiperComponent from '../Components/Other/SwiperComponent'
 import axios from 'axios'
@@ -11,16 +11,10 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import 'swiper/css/effect-fade';
 import ErrorPage from './ErrorPage'
-import { Link } from 'react-router-dom'
+import UserContext from '../Context/UserContext'
 
 
 const MainPage = ({currentWidth}) => {
-  // const [bestScorePage, setBestScorePage] = useState(1)
-  // const [bestScore, setBestScore] = useState([])
-  // const [popularHasNextPage, setPopularHasNextPage] = useState([])
-  // const [trendingNowPage, setTrendingNowPage] = useState(1)
-  // const [trendingNowHasNextPage, setTrendingNowHasNextPage] = useState([])
-  // const [popularPage, setPopularPage] = useState(1)
   const [errorObj, setErrorObj] = useState(null)
   const [fetchError, setFetchError] = useState(false)
   const [finishedRequestCount, setFinishedRequestCount] = useState(0)
@@ -31,8 +25,10 @@ const MainPage = ({currentWidth}) => {
   const [bestScore, setBestScore] = useState(null)
   const [upcoming, setUpcoming] = useState(null)
   const [trendingNow, setTrendingNow] = useState(null)
+  const [animeHistory, setAnimeHistory] = useState([])
   const [swiper, setSwiper] = useState(null)
-  const [animeHistory, setAnimeHistory] = useState(JSON.parse(localStorage.getItem("animeHistory")))
+
+  const {user} = useContext(UserContext)
 
   const bannerItems = useRef([
     {
@@ -74,9 +70,8 @@ const MainPage = ({currentWidth}) => {
     },
   ])
 
-  const setItems = (set, resp) => {
-    set(resp.data.results)
-    console.log(resp);
+  const setItems = (set, res) => {
+    set(res.data.results)
     setFinishedRequestCount(prev => prev+1)
   }
 
@@ -86,10 +81,7 @@ const MainPage = ({currentWidth}) => {
     setPreloader(false)
     console.log(e);
   }
-  
-  // useEffect(() => {
-  // }, [])
-  
+    
   useEffect(() => {
     if(finishedRequestCount >= 4) {
       setIsloaded(false)
@@ -106,36 +98,33 @@ const MainPage = ({currentWidth}) => {
     setPreloader(true)
 
     axios.get(`https://march-api1.vercel.app/meta/anilist/trending?perPage=20`)
-    .then(resp => setItems(setTrendingNow, resp))
+    .then(res => setItems(setTrendingNow, res))
     .catch(e => setError(e))
 
-    // axios.get(`https://api.consumet.org/meta/anilist/advanced-search?sort=["POPULARITY_DESC"]&perPage=20`)
     axios.get(`https://march-api1.vercel.app/meta/anilist/popular?perPage=20`)
-    .then(resp => setItems(setPopular, resp))
+    .then(res => setItems(setPopular, res))
     .catch(e => setError(e))
 
     axios.get(`https://march-api1.vercel.app/meta/anilist/advanced-search?sort=["POPULARITY_DESC"]&status=NOT_YET_RELEASED&perPage=20`)
-    .then(resp => setItems(setUpcoming, resp))
+    .then(res => setItems(setUpcoming, res))
     .catch(e => setError(e))
 
     axios.get(`https://march-api1.vercel.app/meta/anilist/advanced-search?sort=["SCORE_DESC"]&perPage=20`)
-    .then(resp => setItems(setBestScore, resp))
+    .then(res => setItems(setBestScore, res))
     .catch(e => setError(e))
-
   }, [])
 
-  // useEffect(() => {
-  //   axios.get(`https://api.consumet.org/meta/anilist/recent-episodes`)
-  //   .then(resp => {
-  //     setBestScore(resp.data)
-  //   })
-  // }, [])
+  useEffect(() => {
+    if(!user?.isValid) return
+    axios.get(`http://localhost:3000/users/${user?._id}/anime-history`)
+    .then(res => setAnimeHistory(res.data))
+    .catch(e => console.log(e))
+  }, [user])
 
   if(preloader) return <PreloaderComponent isLoaded={isLoaded}/>
   if(fetchError) return <ErrorPage errorObj={errorObj}/>
   return (
     <div className="animate-fadeInAnimate fill-mode-forward opacity-0 flex flex-col items-center">
-      {/* <Test /> */}
       <div className="w-full -mt-[90px] relative">
         <div
           className="450res:p-1 450res:bottom-0 450res:right-16 370res:-bottom-20 700res:z-20 1650res:hidden 700res:block 700res:rounded-lg 700res:top-auto 700res:left-auto 700res:h-max 700res:right-24 700res:-bottom-2 700res:py-3 hover:bg-black/10 hover:backdrop-blur-sm duration-300 cursor-pointer z-10 absolute top-1/2 -translate-y-1/2 left-0 px-5 flex items-center justify-center h-full"
@@ -150,8 +139,8 @@ const MainPage = ({currentWidth}) => {
             fill="none"
           >
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
               fill="white"
             />
@@ -170,8 +159,8 @@ const MainPage = ({currentWidth}) => {
             fill="none"
           >
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
               fill="white"
             />
@@ -193,7 +182,6 @@ const MainPage = ({currentWidth}) => {
           {bannerItems.current?.map((item) => (
             <SwiperSlide>
               <MainBanner
-                src={item?.src}
                 posterImg={item?.posterImg}
                 animeId={item?.id}
                 title={item?.title}
@@ -217,12 +205,8 @@ const MainPage = ({currentWidth}) => {
               type={"anime"}
             />
           ) : null}
-          {/* <div>
-              <h3>Recent episodes</h3>
-              <SwiperComponent currentWidth={currentWidth} items={bestScore} type={"anime"}/>
-            </div> */}
 
-          {animeHistory ? (
+          {animeHistory?.length > 0 ? (
             <>
               <div className="flex justify-between items-center 1480res:px-[28px] px-2 500res:mb-3 500res:mt-16 mb-5 mt-20">
                 <h3 className="text-2xl font-medium">Continue watch</h3>
@@ -300,8 +284,6 @@ const MainPage = ({currentWidth}) => {
               type={"animeLonger"}
             />
           ) : null}
-
-          {/* FIXME */}
         </div>
       </div>
     </div>

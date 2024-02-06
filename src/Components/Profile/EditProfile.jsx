@@ -1,11 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../../Context/UserContext'
 import AuthorizationInput from '../Authorization/AuthorizationInput'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
-import PreloaderComponent from '../Other/PreloaderComponent'
-import ErrorPage from '../../Pages/ErrorPage'
-import getUserData from '../../helpers/getUserData'
 
 
 const EditProfile = ({currentWidth}) => {
@@ -30,29 +26,13 @@ const EditProfile = ({currentWidth}) => {
     if(condition) {
       setValue(readerResult)
       setImageIsLoading(false)
-      console.log("CANDITION TRUE");
     } else {
       setPatchResponse({status: 400, response: {data: { message: errorMessage}}})
       setImageIsLoading(false)
     }
-
-    // if(isCover) {
-    //   if(img.naturalWidth > 1280 && img.naturalHeight > 220) {
-    //   } else {
-    //   }
-    // } else {
-    //   if(img.naturalWidth < 1000 && img.naturalHeight < 1000) {
-    //     setValue(reader.result)
-    //     setImageIsLoading(false)
-    //   } else {
-    //     setPatchResponse({status: 400, response: {data: { message: "Min cover resolution 1280x720"}}})
-    //     setImageIsLoading(false)
-    //   }
-    // }
   }
 
   const handleChangeImage = async(e, setValue, isCover) => {
-    // check is file exists
     const file = e.target.files[0]
     if(!file) return
 
@@ -70,10 +50,8 @@ const EditProfile = ({currentWidth}) => {
       return
     }
 
-    // console.dir(file);
     const reader = new FileReader()
     reader.onload = () => {
-      console.log(reader.result);
       const img = document.createElement("img")
       img.src = reader.result
       img.onload = () => {
@@ -102,18 +80,16 @@ const EditProfile = ({currentWidth}) => {
       update,
       {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
     .then(resp => {
+      setUser({...resp.data, isValid:true, isLoading:false})
       setPatchResponse(resp)
-      setIsLoading(false)
-      console.log(resp);
-      setTimeout(() => getUserData(setUser), 2000)
-      // getUserData(setUser)
+      setConfirmSave(false)
     })
     .catch(err => {
       setPatchResponse(err)
-      setIsLoading(false)
       setConfirmSave(false)
       console.log(err);
     })
+    .finally(() => setIsLoading(false))
   }
 
   useEffect(() => {
@@ -148,7 +124,7 @@ const EditProfile = ({currentWidth}) => {
             </div>          </div>
         </div>
         <div className='mb-10'>
-          <div className='text-sm text-white/70 mb-2'>{`Cover ( min 1920x330 )`}</div>
+          <div className='text-sm text-white/70 mb-2'>{`Cover ( min 1280x220 )`}</div>
           <div className='flex items-center gap-4 1000res:flex-col 1000res:items-start 1000res:gap-5'>
             <div style={{backgroundImage: `url(${newCover})`, height: `calc(${currentWidth - 60}px / 5.818181)`}}
               className={`${currentWidth <= 1000 ? "600res:!h-[93px]" : "!h-[137px]"} 1000res:w-full w-[800px] rounded-md bg-center bg-cover bg-no-repeat`}></div>
@@ -169,44 +145,30 @@ const EditProfile = ({currentWidth}) => {
               <textarea placeholder="Your new bio..." className='w-full h-full bg-transparent outline-none placeholder:font-normal placeholder:text-white/40 text-white' value={newBio} maxLength={500} onChange={e => setNewBio(e.target.value)} rows="5" cols="20"></textarea>
             </div>
           </div>
-          {/* <AuthorizationInput type={"text"} placeholder={user?.login} title={"Login"} setValue={setNewLogin} value={newLogin}/> */}
-          {/* {true ?
-            <div className='opacity-0 animate-fadeInAnimate fill-mode-forward'>
-            </div>
-          : */}
-            <div className={`${isLoading ? "animate-pulse" : ""} flex gap-3 my-5`}>
-              <button className={`${imageIsLoading || isNothingChanged ? "btn-disabled" : ""} ${!confirmSave ? "bg-white text-def-black" : "bg-green-500 text-white"} btn-base`}
-                onClick={(e) => {
-                  if(confirmSave) {
-                    handleSaveChanges()
-                  }
-                  setConfirmSave(true)
-                }}
-              >{confirmSave ? "Confirm changes" : "Save"}</button>
-              <button className={`${imageIsLoading || isNothingChanged ? "btn-disabled" : ""} btn-base bg-def-gray text-white`}
-                onClick={() => {
-                  if(confirmSave) {
-                    setConfirmSave(!confirmSave)
-                  }
-                  handleResetChanges()
-                }}
-              >Reset</button>
-            </div>
-          {/* } */}
+          <div className={`${isLoading ? "animate-pulse" : ""} flex gap-3 my-5`}>
+            <button className={`${imageIsLoading || isNothingChanged ? "btn-disabled" : ""} ${!confirmSave ? "bg-white text-def-black" : "bg-green-500 text-white"} btn-base`}
+              onClick={(e) => {
+                if(confirmSave) {
+                  handleSaveChanges()
+                }
+                setConfirmSave(true)
+              }}
+            >{confirmSave ? "Confirm changes" : "Save"}</button>
+            <button className={`${imageIsLoading || isNothingChanged ? "btn-disabled" : ""} btn-base bg-def-gray text-white`}
+              onClick={() => {
+                if(confirmSave) {
+                  setConfirmSave(!confirmSave)
+                }
+                handleResetChanges()
+              }}
+            >Reset</button>
+          </div>
           {patchResponse ?
             <div className={`${patchResponse.status === 200 ? "bg-green-500" : "bg-red-500"} opacity-0 animate-fadeInAnimate fill-mode-forward rounded-md p-3 my-2`}>{patchResponse?.status === 200 ?
                 "Changes have been saved succesfully."
               :
                 `${patchResponse?.status === 413 ? "Image too large (max 10mb)" : patchResponse?.response?.data?.message}`}</div>
           : null}
-          {/* <div>
-            <AuthorizationInput type={"password"} placeholder={"Confirm password"} title={"Confirm Password"} setValue={setNewPassword} value={newPassword}/>
-            <div className='flex gap-3 my-5'>
-              <button className='btn-base bg-white text-def-black'>Save</button>
-              <Link to={"/profile/me"} className='btn-base bg-def-gray text-white'>Cancel</Link>
-            </div>
-          </div> */}
-          {/* <AuthorizationInput type={"password"} placeholder={"Confirm your password"} title={"Password"} setValue={setNewPassword} value={newPassword}/> */}
         </div>
     </div>
   )

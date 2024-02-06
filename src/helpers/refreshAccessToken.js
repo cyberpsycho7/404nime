@@ -1,42 +1,13 @@
 import axios from "axios"
-import getUserData from "./getUserData"
-import { useContext } from "react"
-import UserContext from "../Context/UserContext"
-import RefreshTokenIntervalContext from "../Context/RefreshTokenIntervalContext"
-
 
 const refreshAccessToken = async({setUser = () => {}}) => {
-    // const {user, setUser, setIsRefreshError} = useContext(UserContext)
-    // const interval = useContext(RefreshTokenIntervalContext)
-
     if(localStorage.getItem("JWTRefresh")) {
-        // axios.get("http://localhost:3000/users/me", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWT")}`}})
         return axios.get("https://four04nime.onrender.com/users/auth/refresh-token", {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTRefresh")}`}})
-        .then(res => {
-            localStorage.setItem("JWTAccess", res.data.accessToken)
-            console.log(res.data.accessToken + "  ||| NEW TOKEn");
-            // interval.refresh()
-            // localStorage.setItem("isJWTError", false)
-            // setIsRefreshError(true)
-            // getUserData()
-            // setTimeout(refreshAccessToken, 3000)
-            // getUserData(setUser)
-            // return true
-        })
-        .catch(() => {
-            setUser({isValid: false, isLoading: false})
-            // setUser({isValid: false, isLoading: false})
-            
-            
-            // localStorage.removeItem("JWTAccess")
-            // return false
-            
-        })
+        .then(res => localStorage.setItem("JWTAccess", res.data.accessToken))
+        .catch(() => setUser({isValid: false, isLoading: false}))
     } else {
         localStorage.removeItem("JWTAccess")
         setUser({isValid: false, isLoading: false})
-        // setUser({isValid: false, isLoading: false})
-        // return false
     }
 
 }

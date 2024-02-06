@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import NavBar from '../Components/NavBar/NavBar';
 import TrailerWatcher from '../Components/Other/TrailerWatcher';
@@ -8,7 +8,6 @@ const Layout = () => {
   const location = useLocation()
 
   useEffect(() => {
-    console.log(location);
     window.scrollTo(0, 0)
   }, [location])
 

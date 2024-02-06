@@ -1,21 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const MiniSearchCard = ({item, setInputFocus}) => {
 
     const [ratingRounded, setRatingRounded] = useState(0)
-    // const roundedRating = useMemo(() => {
-    //     const strNum = String(item.rating)
-    //     if(strNum[2] < 5) return strNum[1]+'0'
-    //     else return (Number(strNum[1])+1)+'0'
-    // }, [item.rating])
 
     useEffect(() => {
         const rounded = Math.round(item.rating/10)
         setRatingRounded(rounded*10)
     }, [item])
-
-    // console.log(roundedRating);
 
   return (
     <Link to={`/more-info/${item.id}`} onClick={() => setInputFocus(false)}>

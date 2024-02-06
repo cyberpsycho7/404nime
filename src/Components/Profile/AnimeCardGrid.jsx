@@ -7,7 +7,7 @@ const AnimeCardGrid = ({isShow, listArray, type, deleteOneFromUserList, isDelete
     flex-shrink-0 justify-items-center h-min 1320res:grid-cols-5 1000res:grid-cols-4
     800res:grid-cols-3 700res:grid-cols-4 600res:grid-cols-3 500res:grid-cols-4 450res:grid-cols-3 330res:grid-cols-2`}
     >
-        {listArray?.map(el => <div className='relative'>
+        {listArray?.map(el => <div key={el.animeId} className='relative'>
             <span onClick={() => !isDeleteLoading ? deleteOneFromUserList(type, el.animeId) : null}
                 className={`${isEditing ? "opacity-100" : "!opacity-0 pointer-events-none"} ${isDeleteLoading ? "animate-pulse !cursor-not-allowed " : ""} flex cursor-pointer active:scale-90 duration-100
                 absolute top-2 right-2 500res:w-10 500res:h-10 w-14 h-14 bg-def-gray justify-center items-center rounded-full 1320res:flex`}>

@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react'
 import AuthorizationInput from './AuthorizationInput'
 import axios from 'axios'
 import UserContext from '../../Context/UserContext'
-import PreloaderComponent from '../Other/PreloaderComponent'
 import { useSearchParams } from 'react-router-dom'
 import PopUpModal from '../Other/PopUpModal'
 
@@ -20,7 +19,6 @@ const Login = ({isShow, close, toggleAuth}) => {
         if(!password || !login) return
         setIsLoading(true)
         axios.post("https://four04nime.onrender.com/users/auth/login", {
-        // axios.post("https://four04nime.onrender.com/users/registration", {
             login: login,
             password: password
         })
@@ -31,9 +29,7 @@ const Login = ({isShow, close, toggleAuth}) => {
             localStorage.setItem("JWTAccess", res.data.accessToken)
             localStorage.setItem("JWTRefresh", res.data.refreshToken)
             setSearchParams({})
-            setTimeout(() => {
-                location.reload()
-            }, 1000)
+            setTimeout(() => location.reload(), 1000)
         })
         .catch((res) => {
             console.log(res);

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MoreInfoBanner from '../Components/MoreInfoPage/MoreInfoBanner'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import PreloaderComponent from '../Components/Other/PreloaderComponent'
 import AnimeInfoOverview from '../Components/MoreInfoPage/AnimeInfoOverview'
@@ -10,17 +10,14 @@ import AnimeInfoNavTab from '../Components/MoreInfoPage/AnimeInfoNavTab'
 import AnimeInfoCharacters from '../Components/MoreInfoPage/AnimeInfoCharacters'
 import ErrorPage from './ErrorPage'
 import SwiperComponent from '../Components/Other/SwiperComponent'
-import { info } from 'autoprefixer'
 
 const MoreInfoPage = ({currentWidth}) => {
   const {id} = useParams()
-  // const navigate = useNavigate()
   
     const [animeTypes, setAnimeTypes] = useState(["TV", "TV_SHORT", "OVA", "ONA", "MOVIE", "SPECIAL", "MUSIC"])
     const [isManga, setIsManga] = useState(false)
     const [preloader, setPreloader] = useState(true)
     const [animeInfo, setAnimeInfo] = useState(null)
-    const [characters, setCharacters] = useState(null)
     const [openedBlock, setOpenedBlock] = useState(0)
     const [secondOpenedBlock, setSecondOpenedBlock] = useState(0)
     const [episodeInfo, setEpisodeInfo] = useState(null)
@@ -54,7 +51,6 @@ const MoreInfoPage = ({currentWidth}) => {
         fixedMangaInfo.chapters = fixedChapters  
         setAnimeInfo(fixedMangaInfo)
         setEpisodeInfo(fixedChapters)
-        console.log(resp.data, "MANHAAAAAAAAAA");
         completeLoading(false)
       })
       .catch((e) => {completeLoading(true); setErrorObj(e)})
@@ -113,16 +109,13 @@ const MoreInfoPage = ({currentWidth}) => {
           else isMangaLocal = true
           setIsManga(isMangaLocal)
           document.title = (resp.data?.title?.english ? resp.data?.title?.english : resp.data?.title?.romaji) + ` - ${isMangaLocal ? "Read" : "Watch"} online on 404NIME`
-          // console.log(animeTypes);
-          // console.log(animeTypes.includes(resp.data.type));
-
-            fetchInfoFromMAL(resp.data.malId, resp.data.type)
-            .then(() => {
-              if(isMangaLocal) fetchMangaInfo()
-              else fetchEpisodesFromZoro(resp.data.episodes)
-            })
+          fetchInfoFromMAL(resp.data.malId, resp.data.type)
+          .then(() => {
+            if(isMangaLocal) fetchMangaInfo()
+            else fetchEpisodesFromZoro(resp.data.episodes)
           })
-          .catch((e) => {completeLoading(true); console.log(e); setErrorObj(e)})
+        })
+        .catch((e) => {completeLoading(true); console.log(e); setErrorObj(e)})
     }, [id])
 
 
@@ -145,17 +138,6 @@ const MoreInfoPage = ({currentWidth}) => {
               <div className={`${moreText ? 'opacity-100' : `opacity-0`} duration-200 absolute -top-[18px] left-0 p-3 rounded-xl h-min font-medium pointer-events-none bg-def-gray`}>{(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)}</div>
             </div>
             <span className="flex gap-1 items-center mb-12 mt-3">
-              {/* <span
-                style={{
-                  "--tw-gradient-from-position":
-                    Math.round(animeInfo?.rating / 10) * 10 - 30 + "%",
-                  "--tw-gradient-to-position":
-                    Math.round(animeInfo?.rating / 10) * 10 - 30 + "%",
-                }}
-                className={`materialIcon text-2xl text-transparent bg-clip-text bg-gradient-to-t from-white from-0 to-white/30 to-0`}
-              >
-                star
-              </span>*/}
               <span
                 style={{
                   "--tw-gradient-from-position": Math.round(animeInfo?.rating / 10) * 10  + "%",
@@ -170,7 +152,6 @@ const MoreInfoPage = ({currentWidth}) => {
                 <span className="materialIcon !text-3xl 450res:!text-2xl">star</span>
               </span>
               <p className="text-lg">{animeInfo?.rating / 10}</p> 
-
             </span>
             <div className="700res:items-stretch flex 800res:text-sm justify-between 1480res:flex-col 1480res:justify-start 1480res:items-start 1480res:gap-4 400res:gap-2">
               <div className='flex gap-4 400res:gap-2 400res:w-full 400res:justify-stretch'>
@@ -179,7 +160,7 @@ const MoreInfoPage = ({currentWidth}) => {
                   className={`${postInListLoading ? "animate-pulse pointer-events-none" : ""} btn-base bg-def-gray text-white flex gap-2 items-center justify-center 700res:w-full`}>
                   <span>
                     <svg className='w-5 h-5' width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <g clip-path="url(#clip0_405_1637)">
+                      <g clipPath="url(#clip0_405_1637)">
                       <path d="M7.74919 20.6625C7.06793 20.6628 6.41457 20.392 5.93325 19.9099L0.443061 14.4217C-0.147687 13.8308 -0.147687 12.8729 0.443061 12.282C1.034 11.6912 1.99191 11.6912 2.58284 12.282L7.74919 17.4483L21.4172 3.78034C22.0081 3.18959 22.966 3.18959 23.5569 3.78034C24.1477 4.37128 24.1477 5.32919 23.5569 5.92012L9.56513 19.9099C9.08381 20.392 8.43045 20.6628 7.74919 20.6625Z" fill="white"/>
                       </g>
                       <defs>
@@ -205,7 +186,7 @@ const MoreInfoPage = ({currentWidth}) => {
                 className={`${postInListLoading ? "animate-pulse pointer-events-none" : ""} 700res:w-full 400res:self-stretch btn-base bg-def-gray text-white w-max flex gap-2 justify-center items-center`}>
                 <span>
                   <svg className='w-5 h-5' width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_405_1496)">
+                    <g clipPath="url(#clip0_405_1496)">
                     <path d="M17.25 1.85071C16.2243 1.86063 15.2152 2.11065 14.3035 2.58073C13.3918 3.05081 12.6029 3.72788 12 4.55771C11.397 3.72788 10.6081 3.05081 9.69644 2.58073C8.78476 2.11065 7.77565 1.86063 6.74996 1.85071C4.89173 1.92491 3.13848 2.73189 1.87358 4.09517C0.608672 5.45846 -0.0649657 7.26713 -4.03235e-05 9.12571C-4.03235e-05 13.6777 4.67396 18.5507 8.59996 21.8377C9.55329 22.6393 10.7589 23.0788 12.0045 23.0788C13.25 23.0788 14.4556 22.6393 15.409 21.8377C19.331 18.5507 24.009 13.6777 24.009 9.12571C24.0738 7.26563 23.399 5.45564 22.1322 4.0921C20.8653 2.72856 19.1098 1.9226 17.25 1.85071ZM13.477 19.5387C13.0634 19.8869 12.5401 20.0779 11.9995 20.0779C11.4588 20.0779 10.9355 19.8869 10.522 19.5387C5.74196 15.5307 2.99996 11.7357 2.99996 9.12571C2.9362 8.06292 3.29424 7.01789 3.99634 6.21749C4.69844 5.4171 5.68793 4.92596 6.74996 4.85071C7.81199 4.92596 8.80148 5.4171 9.50358 6.21749C10.2057 7.01789 10.5637 8.06292 10.5 9.12571C10.5 9.52353 10.658 9.90506 10.9393 10.1864C11.2206 10.4677 11.6021 10.6257 12 10.6257C12.3978 10.6257 12.7793 10.4677 13.0606 10.1864C13.3419 9.90506 13.5 9.52353 13.5 9.12571C13.4362 8.06292 13.7942 7.01789 14.4963 6.21749C15.1984 5.4171 16.1879 4.92596 17.25 4.85071C18.312 4.92596 19.3015 5.4171 20.0036 6.21749C20.7057 7.01789 21.0637 8.06292 21 9.12571C21 11.7357 18.258 15.5307 13.477 19.5387Z" fill="white"/>
                     </g>
                     <defs>
@@ -217,24 +198,18 @@ const MoreInfoPage = ({currentWidth}) => {
                 </span>
                 <p>Add to Fovarite</p>
               </button>
-              
             </div>
           </div>
         </div>
         <div className="w-def 1480res:w-full " id='forEpisodesBtn'>
           <AnimeInfoNavTab isManga={isManga} isFirstPart={true} full={currentWidth <= 400 ? false : true} changeOpenedBlock={setOpenedBlock} currentWidth={currentWidth}/>
-
           <AnimeInfoOverview show={openedBlock === 0 ? true : false} animeInfo={animeInfo} MALInfo={MALInfo} isManga={isManga}/>
           <AnimeInfoEpisodes show={openedBlock === 1 ? true : false} episodeInfo={episodeInfo} currentWidth={currentWidth} id={animeInfo?.id} isManga={isManga}/>
-
           {currentWidth <= 400 ? 
             <AnimeInfoNavTab isFirstPart={false} full={currentWidth <= 400 ? false : true} changeOpenedBlock={setSecondOpenedBlock} currentWidth={currentWidth}/>
           : null}
-          
-          
           <AnimeInfoCharacters show={((openedBlock === 2 || (secondOpenedBlock === 0 && currentWidth <= 400)) ? true : false)} currentWidth={currentWidth} title={(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)} characters={animeInfo?.characters}/>
           <AnimeInfoRelations show={((openedBlock === 3 || (secondOpenedBlock === 1 && currentWidth <= 400)) ? true : false)} currentWidth={currentWidth} title={(animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji)} relations={animeInfo?.relations}/>
-          
           <h3 id='similar' className={`${animeInfo?.recommendations.length < 1 ? "hidden" : ""} text-2xl font-medium mt-20 mb-10 mx-auto w-max`}>{isManga ? "Similar Manga" : "Similar Anime"}</h3>
           <SwiperComponent currentWidth={currentWidth} items={animeInfo?.recommendations} type={isManga ? "manga" : "recomm"}/>
         </div>

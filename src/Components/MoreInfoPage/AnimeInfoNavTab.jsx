@@ -7,35 +7,20 @@ const AnimeInfoNavTab = ({ isFirstPart, full, changeOpenedBlock, currentWidth, i
   const [currentOpened, setCurrentOpened] = useState(0)
 
   useEffect(() => {
-    if(location.hash === '#forEpisodesBtn' && isFirstPart) {
-      setCurrentOpened(1)
-    } 
+    if(location.hash === '#forEpisodesBtn' && isFirstPart) setCurrentOpened(1)
   }, [location])
 
     const change = (num) => {
-        // console.log(num);
         changeOpenedBlock(num)
     }
 
     useEffect(() => {
-        // if(!isFirstPart && full) {
-        //     changeOpenedBlock(null)
-        //     setCurrentOpened(0)
-        // }
         changeOpenedBlock(0)
         setCurrentOpened(0)
     }, [full])
 
-
-    // const changeLine = (num) => {
-    //     if(window.innerWidth <= 400) setMargin(50 * num)
-    //     else setMargin(25 * num)
-    // }
-
   return (
-    // {!isTabsFull ? {isFirstPart ?  : } : }${!isFirstPart && full ? 'none' : 'flex
-    <div
-    
+    <div 
     className={`flex-col w-min  900res:mx-auto 700res:mx-0 400res:w-full mt-10 1480res:px-5`}>
       <div className="flex w-min 540res:text-sm 400res:justify-stretch 400res:w-full">
         <button
@@ -45,7 +30,6 @@ const AnimeInfoNavTab = ({ isFirstPart, full, changeOpenedBlock, currentWidth, i
           onClick={(e) => {
             setCurrentOpened(0)
             change(0)
-            // changeLine(0);
           }}
         >
           Overview
@@ -97,12 +81,10 @@ const AnimeInfoNavTab = ({ isFirstPart, full, changeOpenedBlock, currentWidth, i
           Relations
         </button>
       </div>
-      {/* w-[480px] 540res:w-[360px] */}
       <div className="bg-text-gray/50 h-[2px] w-full 400res:w-full mb-[52px] ">
         <div
         style={{width: `${currentWidth <= 400 ? "50%" : '25%'}`, marginLeft: `${currentWidth <= 400 ? `${currentOpened*50}%` : `${currentOpened*25}%`}`}}
           className={`bg-text-gray h-[2px] 540res:w-[90px] duration-300 400res:w-[50%]`}
-        //   ref={horizThumb}
         ></div>
       </div>
     </div>

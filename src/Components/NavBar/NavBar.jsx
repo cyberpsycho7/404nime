@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import MiniSearchParent from '../Search/MiniSearchParent';
@@ -8,15 +7,12 @@ import Login from '../Authorization/Login';
 import UserContext from '../../Context/UserContext';
 
 const NavBar = () => {
-
     const [searchValue, setSearchValue] = useState('')
     const [typeEnd, setTypeEnd] = useState(false)
     const [scrollIsZero, setScrollIsZero] = useState(true)
     const [inputFocus, setInputFocus] = useState(false)
     const [scrollY, setScrollY] = useState(false)
     const [showNavModal, setShowNavModal] = useState(false)
-    const [showModal, setShowModal] = useState(false)
-    const [preloader, setPreloader] = useState(true)
     const [searchManga, setSearchManga] = useState(false)
     const [pathName , setPathName] = useState("/")
     const [isShowRegistration , setIsShowRegistration] = useState(false)
@@ -35,12 +31,16 @@ const NavBar = () => {
     timeoutRef.current = setTimeout(() => {
       setTypeEnd(true)
     }, 500)
-    // return clearTimeout(timeout)
   }
 
   const toggleAuth = () => {
     setIsShowRegistration(!isShowRegistration)
     setIsShowLogin(!isShowLogin)
+  }
+
+  const changeInput = (bool) => {
+    setInputFocus(bool)
+    setSearchValue('')
   }
 
   useEffect(() => {
@@ -56,21 +56,11 @@ const NavBar = () => {
 
   useEffect(() => {
     window.onscroll = (e) => {
-      // console.log(e);
       if(window.scrollY <= 1) setScrollIsZero(true)
       else setScrollIsZero(false)
       setScrollY(window.scrollY)
     }
   }, [])
-
-  const changeInput = (bool) => {
-    setInputFocus(bool)
-    setSearchValue('')
-  }
-
-  // useEffect(() => {
-  //   if(!searchValue) setShowNavModal(false)
-  // }, [searchValue])
 
   return (
     <div
@@ -106,8 +96,6 @@ const NavBar = () => {
           } text-center text-2xl font-[600] cursor-pointer flex gap-[22px] mx-0 w-max items-center`}
         >
           <Link to={"/"}>
-            {/* <p>くたばれ</p> */}
-            {/* <p>404NIME</p> */}
             <img src={logoText} alt="404NIME" className="h-[24px]" />
           </Link>
           <div onClick={() => {
@@ -119,14 +107,12 @@ const NavBar = () => {
             }}
             className="cursor-pointer hidden 1200res:block 500res:hidden"
           >
-            {/* menu */}
             <svg className='w-7 h-7' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M2 5.5C2 4.94772 2.44772 4.5 3 4.5H21C21.5523 4.5 22 4.94772 22 5.5V6.5C22 7.05228 21.5523 7.5 21 7.5H3C2.44772 7.5 2 7.05228 2 6.5V5.5Z" fill="white"/>
               <path d="M2 11.5C2 10.9477 2.44772 10.5 3 10.5H21C21.5523 10.5 22 10.9477 22 11.5V12.5C22 13.0523 21.5523 13.5 21 13.5H3C2.44772 13.5 2 13.0523 2 12.5V11.5Z" fill="white"/>
               <path d="M3 16.5C2.44772 16.5 2 16.9477 2 17.5V18.5C2 19.0523 2.44772 19.5 3 19.5H21C21.5523 19.5 22 19.0523 22 18.5V17.5C22 16.9477 21.5523 16.5 21 16.5H3Z" fill="white"/>
             </svg>
           </div>
-          {/* <div className="bg-def-gray w-[400px] h-[600px] rounded-xl absolute left-5 top-[110px]"></div> */}
         </div>
         <div onMouseLeave={() => setShowNavModal(false)}
           className={`${showNavModal && !searchValue && !inputFocus ? "1200res:opacity-100 1200res:pointer-events-auto" : ""} 1200res:pointer-events-none 1200res:opacity-0
@@ -169,19 +155,6 @@ const NavBar = () => {
                 Search for Manga
               </span>
             </li>
-            {/* <li>
-              <NavLink
-                style={(param) =>
-                  param.isActive
-                    ? { color: "white" }
-                    : { color: "rgb(232 232 232 / 0.7)" }
-                }
-                className={`cursor-not-allowed`}
-                to={"/collections"}
-              >
-                Collections
-              </NavLink>
-            </li> */}
           </ul>
           <div className=''>
             {user?.isLoading ?
@@ -201,8 +174,8 @@ const NavBar = () => {
                         fill="none"
                       >
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
                           fill="white"
                         />
@@ -210,7 +183,7 @@ const NavBar = () => {
                     </span>
                   </div>
                   <Link to={`/profile/${user?.login}`}>
-                    <div style={{ backgroundImage: `url(${user?.avatar})` }} className='cursor-pointer bg-center bg-no-repeat bg-cover flex-shrink-0 rounded-full w-[44px] h-[44px]'/>
+                    <img src={user?.avatar} alt="user-avatar" className='cursor-pointer flex-shrink-0 rounded-full w-[44px] h-[44px]'/>
                   </Link>
                 </div>
               :
@@ -246,14 +219,10 @@ const NavBar = () => {
             }}
           >
             <span className="cursor-pointer">
-              {/* search */}
               <svg className='w-5 h-5' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path className='fill-white/80 500res:fill-white' fill-rule="evenodd" clip-rule="evenodd" d="M10 0.5C4.75329 0.5 0.5 4.75329 0.5 10C0.5 15.2467 4.75329 19.5 10 19.5C12.082 19.5 14.0076 18.8302 15.5731 17.6944L20.2929 22.4142C20.6834 22.8047 21.3166 22.8047 21.7071 22.4142L22.4142 21.7071C22.8047 21.3166 22.8047 20.6834 22.4142 20.2929L17.6944 15.5731C18.8302 14.0076 19.5 12.082 19.5 10C19.5 4.75329 15.2467 0.5 10 0.5ZM3.5 10C3.5 6.41015 6.41015 3.5 10 3.5C13.5899 3.5 16.5 6.41015 16.5 10C16.5 13.5899 13.5899 16.5 10 16.5C6.41015 16.5 3.5 13.5899 3.5 10Z" fill='#ffffff'/>
+                <path className='fill-white/80 500res:fill-white' fillRule="evenodd" clipRule="evenodd" d="M10 0.5C4.75329 0.5 0.5 4.75329 0.5 10C0.5 15.2467 4.75329 19.5 10 19.5C12.082 19.5 14.0076 18.8302 15.5731 17.6944L20.2929 22.4142C20.6834 22.8047 21.3166 22.8047 21.7071 22.4142L22.4142 21.7071C22.8047 21.3166 22.8047 20.6834 22.4142 20.2929L17.6944 15.5731C18.8302 14.0076 19.5 12.082 19.5 10C19.5 4.75329 15.2467 0.5 10 0.5ZM3.5 10C3.5 6.41015 6.41015 3.5 10 3.5C13.5899 3.5 16.5 6.41015 16.5 10C16.5 13.5899 13.5899 16.5 10 16.5C6.41015 16.5 3.5 13.5899 3.5 10Z" fill='#ffffff'/>
               </svg>
             </span>
-            {/* <span className='w-full h-full'>
-              <img src={svgSearch} alt="" />
-            </span> */}
           </label>
           <input
             value={searchValue}
@@ -272,11 +241,9 @@ const NavBar = () => {
               changeInput(false);
             }}
           >
-            {/* close */}
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289Z" fill="white"/>
             </svg>
-            {/* <svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 -960 960 960" width="24"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg> */}
           </div>
           <MiniSearchParent
             typeEnd={typeEnd}
@@ -296,7 +263,6 @@ const NavBar = () => {
             inputFocus ? "500res:hidden" : ""
           } ml-4 hidden 500res:block cursor-pointer`}
         >
-          {/* menu */}
           <svg className='w-7 h-7' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M2 5.5C2 4.94772 2.44772 4.5 3 4.5H21C21.5523 4.5 22 4.94772 22 5.5V6.5C22 7.05228 21.5523 7.5 21 7.5H3C2.44772 7.5 2 7.05228 2 6.5V5.5Z" fill="white"/>
             <path d="M2 11.5C2 10.9477 2.44772 10.5 3 10.5H21C21.5523 10.5 22 10.9477 22 11.5V12.5C22 13.0523 21.5523 13.5 21 13.5H3C2.44772 13.5 2 13.0523 2 12.5V11.5Z" fill="white"/>
@@ -321,8 +287,8 @@ const NavBar = () => {
                       fill="none"
                     >
                       <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L12 14.5858L19.2929 7.29289C19.6834 6.90237 20.3166 6.90237 20.7071 7.29289C21.0976 7.68342 21.0976 8.31658 20.7071 8.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L3.29289 8.70711C2.90237 8.31658 2.90237 7.68342 3.29289 7.29289Z"
                         fill="white"
                       />
@@ -330,7 +296,7 @@ const NavBar = () => {
                   </span>
                 </div>
                 <Link to={`/profile/${user?.login}`}>
-                  <div style={{ backgroundImage: `url(${user?.avatar})` }} className='cursor-pointer bg-center bg-no-repeat bg-cover flex-shrink-0 rounded-full w-[44px] h-[44px]'/>
+                  <img src={user?.avatar} alt="user-avatar" className='cursor-pointer flex-shrink-0 rounded-full w-[44px] h-[44px]'/>
                 </Link>
               </div>
             :
@@ -343,7 +309,8 @@ const NavBar = () => {
                 className="btn-base bg-white text-def-black cursor-pointer">
                   Get started
                 </button>
-              </div>)
+              </div>
+            )
           }
         </div>
       </div>

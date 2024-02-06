@@ -2,7 +2,7 @@ import React from 'react'
 
 const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, currentChapterIndex, currentPagedStyle, setCurrentPagedStyle, chaptersPages, mangaInfo, currentPage, setCurrentPage}) => {
   return (
-    <div className='w-full flex justify-between items-center'>
+    <div className='w-full flex justify-between items-center flex-wrap gap-5'>
         <div className='flex items-center gap-5'>
             <span className='relative'>
                 <select
@@ -69,7 +69,6 @@ const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, curren
                             {item?.page} / {chaptersPages?.length}
                         </option>
                     ))}
-                    {/* <option val></option> */}
                 </select>
                 <span className='absolute right-[5px] top-1/2 -translate-y-1/2 '>
                     <svg className='w-[12px]' xmlns="http://www.w3.org/2000/svg" version="1.0" width="16.000000pt" height="16.000000pt" viewBox="0 0 16.000000 16.000000" preserveAspectRatio="xMidYMid meet">
@@ -82,7 +81,7 @@ const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, curren
             </span>
             <div className='flex gap-2 items-center'>
                 <a href='#img'
-                    className='btn-base bg-white text-def-gray flex items-center gap-1 !rounded-md !pr-[14px] !pl-[10px] !py-[12px] cursor-pointer'
+                    className='btn-base 600res:!p-2 bg-white text-def-gray flex items-center gap-1 !rounded-md !pr-[14px] !pl-[10px] !py-[12px] cursor-pointer'
                     onClick={handlePrev}
                 >
                     <span>
@@ -105,7 +104,7 @@ const MangaPagination = ({handleNext, handlePrev, setCurrentChapterIndex, curren
                     <span>Prev</span>
                 </a>
                 <a href='#img'
-                    className='btn-base bg-white text-def-gray flex items-center gap-1 !rounded-md !pl-[14px] !pr-[10px] !py-[12px] cursor-pointer'
+                    className='btn-base 600res:!p-2 bg-white text-def-gray flex items-center gap-1 !rounded-md !pl-[14px] !pr-[10px] !py-[12px] cursor-pointer'
                     onClick={handleNext}    
                 >
                     <span>Next</span>

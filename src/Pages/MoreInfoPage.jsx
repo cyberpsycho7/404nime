@@ -61,7 +61,6 @@ const MoreInfoPage = ({currentWidth}) => {
       .then(resp => {
         if(episodes.length === resp.data.episodes.length) setEpisodeInfo(resp.data.episodes)
         else setEpisodeInfo([])
-        console.log(resp.data.episodes);
         completeLoading(false)
       })
       .catch((e) => {completeLoading(true); setEpisodeInfo(null); setErrorObj(e)} )
@@ -71,7 +70,6 @@ const MoreInfoPage = ({currentWidth}) => {
       if(!MALId) return
       return axios.get(`https://api.jikan.moe/v4/${animeTypes.includes(type) ? "anime" : "manga"}/${MALId}/full`)
       .then(resp => {
-        console.log(resp.data.data)
         setMALInfo(resp.data.data)
       })
       .catch((e) => {console.log(e)})   
@@ -88,8 +86,11 @@ const MoreInfoPage = ({currentWidth}) => {
         title: animeInfo?.title,
         type: animeInfo?.type
       }, {headers: {"Authorization": `Bearer ${localStorage.getItem("JWTAccess")}`}})
-      .then(res => throwNotification("Successfully added!"))
-      .catch(err => throwNotification(err.response.data.message))
+      .then(() => throwNotification("Successfully added!"))
+      .catch(err => {
+        if(err?.response?.status === 401) throwNotification("Log In to manage anime list")
+        else throwNotification(err.response.data.message)
+      })
       .finally(() => setPostInListLoading(false))
     }
 
@@ -102,7 +103,6 @@ const MoreInfoPage = ({currentWidth}) => {
         setMALInfo(null)
         axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=gogoanime`)
         .then((resp) => {
-          console.log(resp);
           setAnimeInfo(resp.data);
           let isMangaLocal = false
           if(animeTypes.includes(resp.data.type)) isMangaLocal = false

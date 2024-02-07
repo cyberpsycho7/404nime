@@ -5,7 +5,7 @@
 </p>
 <h1 align="center">404NIME</h1>
 
-<p align="center">React JS + Tailwind web app devoloped using <a href="https://consumet.org/">Consumet API</a></p>
+<description align="center">React JS + Tailwind web app for watch Anime and read Manga devoloped using <a href="https://consumet.org/">Consumet API</a></description>
 <p align="center">On this site you can watch not only anime, also you can read manga.</p>
 
 <h1>Screenshots</h1>

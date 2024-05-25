@@ -81,6 +81,10 @@ const MainPage = ({currentWidth}) => {
     setPreloader(false)
     console.log(e);
   }
+
+  const clearHistory = () => {
+    //FIXME NADO SDELAT UDALENIE VSEI ISTORII
+  }
     
   useEffect(() => {
     if(finishedRequestCount >= 4) {
@@ -180,7 +184,7 @@ const MainPage = ({currentWidth}) => {
           }}
         >
           {bannerItems.current?.map((item) => (
-            <SwiperSlide>
+            <SwiperSlide key={item?.id}>
               <MainBanner
                 posterImg={item?.posterImg}
                 animeId={item?.id}
@@ -226,7 +230,7 @@ const MainPage = ({currentWidth}) => {
                         className="w-max btn-base bg-red-500 text-white gap-1 600res:text-sm 450res:text-xs 450res:p-[8px]"
                         onClick={() => {
                           setAnimeHistory(null);
-                          localStorage.removeItem("animeHistory");
+                          clearHistory()
                         }}
                       >
                         Clear history

@@ -100,7 +100,7 @@ const SwiperComponent = ({currentWidth, items, type}) => {
           {items?.map((item) => (
             <SwiperSlide
               key={
-                type === "character" ? item?.name?.full : item?.id
+                type === "character" ? item?.name?.full : (item?.animeId ? item?.animeId : item?.id)
               }
             >
               {type === "animeLonger" ? 

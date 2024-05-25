@@ -140,10 +140,9 @@ const MoreInfoPage = ({currentWidth}) => {
             <span className="flex gap-1 items-center mb-12 mt-3">
               <span
                 style={{
-                  "--tw-gradient-from-position": Math.round(animeInfo?.rating / 10) * 10  + "%",
-                  "--tw-gradient-to-position": Math.round(animeInfo?.rating / 10) * 10  + "%",
+                  "--tw-gradient-from-position": animeInfo?.rating / 10 * 10  + "%",
                 }}
-                className={`flex gap-1 w-[max-content] text-transparent bg-clip-text bg-gradient-to-r from-white from-80% to-white/30 to-80% 450res:gap-0`}
+                className={`flex gap-1 w-[max-content] text-transparent bg-clip-text bg-gradient-to-r from-white from-0% to-white/30 to-0% 450res:gap-0`}
               >
                 <span className="materialIcon !text-3xl 450res:!text-2xl">star</span>
                 <span className="materialIcon !text-3xl 450res:!text-2xl">star</span>

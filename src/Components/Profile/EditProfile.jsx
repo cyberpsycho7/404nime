@@ -20,8 +20,8 @@ const EditProfile = ({currentWidth}) => {
 
   const imageResolutionCheck = (setValue, readerResult, isCover, width, height, errorMessage) => {
     let condition;
-    if(isCover) condition = (width > 1280 && height > 220)
-    else condition = (width < 1000 && height < 1000)
+    if(isCover) condition = (width >= 1280 && height >= 220)
+    else condition = (width <= 1000 && height <= 1000)
 
     if(condition) {
       setValue(readerResult)

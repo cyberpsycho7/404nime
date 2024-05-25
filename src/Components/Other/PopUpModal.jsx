@@ -10,7 +10,7 @@ const PopUpModal = ({children, isUserLoading = false, isLoading, isShow, close, 
         }
     }, [isShow])
   return (
-    <div id='modal-back' className={`${isShow ? "opacity-100" : "opacity-0 pointer-events-none"} overflow-hidden px-10 500res:px-5 z-40 absolute w-full h-screen top-0 left-0 flex items-center justify-center bg-black/40`} onClick={(e) => {
+    <div id='modal-back' className={`${isShow ? "opacity-100" : "opacity-0 pointer-events-none"} overflow-hidden px-10 500res:px-5 z-40 fixed w-full h-screen top-0 left-0 flex items-center justify-center bg-black/40`} onClick={(e) => {
         if(e.target.id === "modal-back") close()
     }}>
         <div style={{maxWidth: `${maxWidth}px`}} className={`${isShow ? "opacity-100" : "opacity-0 pointer-events-none"} ${isLoading || isUserLoading ? "pointer-events-none" : ""} duration-300 flex flex-col relative

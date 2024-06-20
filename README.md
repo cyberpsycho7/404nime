@@ -68,4 +68,3 @@
   <img src="https://ik.imagekit.io/subanime/404nime_read-page" alt="screenshot"/>
 </p>
 <h2></h2>
-

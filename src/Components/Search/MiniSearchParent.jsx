@@ -23,8 +23,8 @@ const MiniSearchParent = ({searchValue, typeEnd, setInputFocus, searchManga, set
       if(!typeEnd) return
 
       setPreloader(true)
-      let fetchUrl = `https://march-api1.vercel.app/meta/anilist/advanced-search?type=ANIME&perPage=15&query=${searchValue}`
-      if(searchManga) fetchUrl = `https://march-api1.vercel.app/meta/anilist-manga/${searchValue}`
+      let fetchUrl = `https://consumetnewcopy.vercel.app/meta/anilist/advanced-search?type=ANIME&perPage=15&query=${searchValue}`
+      if(searchManga) fetchUrl = `https://consumetnewcopy.vercel.app/meta/anilist-manga/${searchValue}`
 
       axios.get(fetchUrl, {headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'

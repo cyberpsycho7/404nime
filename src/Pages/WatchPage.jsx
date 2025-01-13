@@ -127,10 +127,10 @@ const WatchPage = () => {
     setPreloader(true)
     setIsLoaded(true)
     if(!id) return
-    axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}`)
+    axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/info/${id}`)
     .then(resp => {
       setAnimeInfo(resp.data)
-      axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=zoro`)
+      axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/info/${id}?provider=zoro`)
       .then(zoroResp => {
         if(zoroResp.data.episodes.length === resp.data.episodes.length) setEpisodeInfo(zoroResp.data.episodes)
         else setEpisodeInfo(resp.data.episodes)
@@ -147,7 +147,7 @@ const WatchPage = () => {
     if(!animeInfo) return
     setVideoPreloader(true)
     document.title = (animeInfo?.title?.english ? animeInfo?.title?.english : animeInfo?.title?.romaji) + " - Episode " + currentEpNum + " - Watch online on 404NIME"
-      axios.get(`https://march-api1.vercel.app/meta/anilist/watch/${animeInfo?.episodes[currentEpNum-1].id}`)
+      axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/watch/${animeInfo?.episodes[currentEpNum-1].id}`)
       .then(resp => {
         let sources = resp.data.sources
         let defaultSource = sources.filter(item => item?.quality === "default")[0].url

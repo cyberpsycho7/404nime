@@ -101,19 +101,19 @@ const MainPage = ({currentWidth}) => {
     setIsloaded(true)
     setPreloader(true)
 
-    axios.get(`https://march-api1.vercel.app/meta/anilist/trending?perPage=20`)
+    axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/trending?perPage=20`)
     .then(res => setItems(setTrendingNow, res))
     .catch(e => setError(e))
 
-    axios.get(`https://march-api1.vercel.app/meta/anilist/popular?perPage=20`)
+    axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/popular?perPage=20`)
     .then(res => setItems(setPopular, res))
     .catch(e => setError(e))
 
-    axios.get(`https://march-api1.vercel.app/meta/anilist/advanced-search?sort=["POPULARITY_DESC"]&status=NOT_YET_RELEASED&perPage=20`)
+    axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/advanced-search?sort=["POPULARITY_DESC"]&status=NOT_YET_RELEASED&perPage=20`)
     .then(res => setItems(setUpcoming, res))
     .catch(e => setError(e))
 
-    axios.get(`https://march-api1.vercel.app/meta/anilist/advanced-search?sort=["SCORE_DESC"]&perPage=20`)
+    axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/advanced-search?sort=["SCORE_DESC"]&perPage=20`)
     .then(res => setItems(setBestScore, res))
     .catch(e => setError(e))
   }, [])

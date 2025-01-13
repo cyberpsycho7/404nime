@@ -143,10 +143,10 @@ const AdvancedSearchPage = () => {
     setPreloader(true)
     setIsLoaded(true)
     setSearchError(false)
-    let URL = `https://march-api1.vercel.app/meta/anilist/advanced-search`
-    if(selectedGenres.length > 0 && searchValue) URL = `https://march-api1.vercel.app/meta/anilist/advanced-search?genres=[${selectedGenres.map(item => {return `"${item}"`})}]&query=${searchValue}`
-    else if(selectedGenres.length > 0) URL = `https://march-api1.vercel.app/meta/anilist/advanced-search?genres=[${selectedGenres.map(item => {return `"${item}"`})}]`
-    else if(searchValue) URL = `https://march-api1.vercel.app/meta/anilist/advanced-search?query=${searchValue}`
+    let URL = `https://consumetnewcopy.vercel.app/meta/anilist/advanced-search`
+    if(selectedGenres.length > 0 && searchValue) URL = `https://consumetnewcopy.vercel.app/meta/anilist/advanced-search?genres=[${selectedGenres.map(item => {return `"${item}"`})}]&query=${searchValue}`
+    else if(selectedGenres.length > 0) URL = `https://consumetnewcopy.vercel.app/meta/anilist/advanced-search?genres=[${selectedGenres.map(item => {return `"${item}"`})}]`
+    else if(searchValue) URL = `https://consumetnewcopy.vercel.app/meta/anilist/advanced-search?query=${searchValue}`
     axios.get(URL, {params: searchParams})
     .then(resp => {
       document.title = `Anime Catalog sorted by ${((sort.find(item => item.id === selectedSort)).title)} - 404NIME`

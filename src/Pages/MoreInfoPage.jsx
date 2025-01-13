@@ -43,7 +43,7 @@ const MoreInfoPage = ({currentWidth}) => {
     }
 
     const fetchMangaInfo = async() => {
-      return axios.get(`https://march-api1.vercel.app/meta/anilist-manga/info/${id}?provider=mangadex`)
+      return axios.get(`https://consumetnewcopy.vercel.app/meta/anilist-manga/info/${id}?provider=mangadex`)
       .then(resp => {
         let fixedMangaInfo = {...resp.data}
         let chaptersCopy = [...resp?.data?.chapters]
@@ -57,7 +57,7 @@ const MoreInfoPage = ({currentWidth}) => {
     }
 
     const fetchEpisodesFromZoro = async(episodes) => {
-      return axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=zoro`)
+      return axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/info/${id}?provider=zoro`)
       .then(resp => {
         if(episodes.length === resp.data.episodes.length) setEpisodeInfo(resp.data.episodes)
         else setEpisodeInfo([])
@@ -101,7 +101,7 @@ const MoreInfoPage = ({currentWidth}) => {
         setEpisodeInfo(null)
         setFetchError(false)
         setMALInfo(null)
-        axios.get(`https://march-api1.vercel.app/meta/anilist/info/${id}?provider=gogoanime`)
+        axios.get(`https://consumetnewcopy.vercel.app/meta/anilist/info/${id}?provider=gogoanime`)
         .then((resp) => {
           setAnimeInfo(resp.data);
           let isMangaLocal = false

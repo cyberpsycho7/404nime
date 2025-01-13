@@ -69,7 +69,7 @@ const ReadPage = () => {
     }
     
     const fetchMangaChapter = (chapterId) => {
-        axios.get(`https://march-api1.vercel.app/meta/anilist-manga/read?chapterId=${chapterId}&provider=mangadex`, {
+        axios.get(`https://consumetnewcopy.vercel.app/meta/anilist-manga/read?chapterId=${chapterId}&provider=mangadex`, {
             headers: {Referer: "localhost:8888"}
         })
         .then(resp => {
@@ -82,7 +82,7 @@ const ReadPage = () => {
     useEffect(() => {
         setFetchError(false)
         if(!currentPagedStyle) setCurrentPagedStyle("paged")
-        axios.get(`https://march-api1.vercel.app/meta/anilist-manga/info/${id}?provider=mangadex`)
+        axios.get(`https://consumetnewcopy.vercel.app/meta/anilist-manga/info/${id}?provider=mangadex`)
         .then(resp => {
             let fixedMangaInfo = fixChapters(resp.data)
             handleChangeTitle(fixedMangaInfo?.title, fixedMangaInfo?.chapters[currentChapterIndex].chapterNumber)
